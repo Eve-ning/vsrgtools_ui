@@ -35,5 +35,3 @@ class Chart:
         self.chart_cols[key] = item
 
 
-ch = Chart([ChartColumn(1,2,3), ChartColumn(3,2,1)], ordering=(1,0))
-print(ch[0])
