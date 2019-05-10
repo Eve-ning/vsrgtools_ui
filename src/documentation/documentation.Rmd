@@ -1,0 +1,46 @@
+---
+title: "documentation"
+author: "eve-ning"
+date: "5/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+Keep it short, make a simulator that plays VSRG
+
+# THE PLAN
+
+1. Create an interface for **VSRG Charts**
+2. Create an interface for the **Player**
+3. Create an environment where both of those **interact**
+
+  We want to be able to test out the parameters
+
+# THE PLAN +
+
+4. Simulate the plays and train the machine according to players
+
+# VSRG Chart Interface
+
+We will be trimming out all the unnecessary information that a **note** can hold, such as:
+
+- *hitsound*
+- *snap*
+- *scroll speed*
+
+So we will just need 
+
+- *column*
+- *offset*
+- *type*
+  
+  *note, long_note_head, long_note_end*
+  
+All of these would be done in Python, then we will import into R.
+
+
