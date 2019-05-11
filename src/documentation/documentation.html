@@ -390,8 +390,9 @@ $(document).ready(function () {
 <ol style="list-style-type: decimal">
 <li>Create an interface for <strong>VSRG Charts</strong></li>
 <li>Create an interface for the <strong>Player</strong></li>
-<li>Create an environment where both of those <strong>interact</strong> 3.1. We want to be able to test out the parameters</li>
+<li>Create an environment where both of those <strong>interact</strong></li>
 </ol>
+<p>We want to be able to test out the parameters</p>
 </div>
 <div id="the-plan-1" class="section level1">
 <h1>THE PLAN +</h1>
@@ -412,8 +413,34 @@ $(document).ready(function () {
 <li><em>column</em></li>
 <li><em>offset</em></li>
 <li><p><em>type</em></p>
-<p>e.g. <em>note, long_note_head, long_note_end</em></p></li>
+<p><em>note, long_note_head, long_note_end</em></p></li>
 </ul>
+<p>All of these would be done in Python, then we will import into R.</p>
+</div>
+<div id="finger" class="section level1">
+<h1>Finger</h1>
+<p>The finger is the hardest to define. We will first look at it from the bigger picture.</p>
+<p>In the end, we want to produce a single output, how <strong>likely</strong> is the person going to hit the note accurately?</p>
+<p>It is still a vague definition, ignore the pedantics, we’ll develop on it later.</p>
+<div id="defining-accuracy" class="section level2">
+<h2>Defining Accuracy</h2>
+<p>When we ask players on what makes them hit a note accurately, it usually narrows down to the most common answers:</p>
+<ul>
+<li><p><strong>P</strong>layer Skill</p>
+<p><strong>Global Data</strong> This variable can be assumed to be <em>independent</em> from the map</p></li>
+<li><p><strong>S</strong>train (during the map)</p>
+<p><strong>Relative/Local Data</strong> This variable is relative to how hard the map is</p></li>
+<li><p><strong>T</strong>ype of note</p>
+<p><strong>Categorical Data</strong> This variable is dependent on the note type:</p>
+<ul>
+<li>Note</li>
+<li>Long Note Head</li>
+<li>Long Note End</li>
+</ul></li>
+</ul>
+<p>Let’s summarize it with a draft formula</p>
+<p><span class="math display">\[A = p(s(m),t)\]</span></p>
+</div>
 </div>
 
 

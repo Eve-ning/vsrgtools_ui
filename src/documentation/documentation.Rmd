@@ -43,4 +43,41 @@ So we will just need
   
 All of these would be done in Python, then we will import into R.
 
+# Finger
+
+The finger is the hardest to define. We will first look at it from the bigger picture.
+
+In the end, we want to produce a single output, how **likely** is the person going to hit the note accurately?
+
+It is still a vague definition, ignore the pedantics, we'll develop on it later.
+
+## Defining Accuracy
+
+When we ask players on what makes them hit a note accurately, it usually narrows down to the most common answers:
+
+- **P**layer Skill
+
+  **Global Data**
+  This variable can be assumed to be *independent* from the map
+  
+- **S**train (during the map)
+
+  **Relative/Local Data**
+  This variable is relative to how hard the map is
+  
+- **T**ype of note
+
+  **Categorical Data**
+  This variable is dependent on the note type:
+  
+  - Note
+  - Long Note Head
+  - Long Note End
+  
+Let's summarize it with a draft formula
+
+$$A = p(s(m),t)$$
+
+This is a vague idea on how it could be calculated.
+
 
