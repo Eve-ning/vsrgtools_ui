@@ -23,8 +23,7 @@ class Chart:
         """
         
         if (ordering):
-            chart_cols = \
-                [chart_cols[x] for x in ordering]
+            chart_cols = [chart_cols[x] for x in ordering]
         
         self.chart_cols = dict(enumerate(chart_cols))
         
