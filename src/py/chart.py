@@ -5,6 +5,7 @@ Created on Fri May 10 19:02:37 2019
 @author: johnc
 """
 
+import pandas as pd
 from chart_column import ChartColumn
 
 class Chart:
@@ -14,23 +15,29 @@ class Chart:
         chart_cols (dict): Access columns with the key being the index.
     """
     def __init__(self,
-                 chart_cols,
-                 ordering: list = None):
+                 cols,
+                 keys = None):
         """
         Args:
-            chart_cols (list(ChartColumn)): list of chart columns
-            ordering (list(int)): list of integers to indicate column ordering
+            cols (list(ChartColumn)): list of chart columns
+            keys (list(int)): list of integers to indicate keys
         """
+        self._cols = pd.DataFrame(data = (),
+                                  columns = ['offsets', 'keys'])
         
-        if (ordering):
-            chart_cols = [chart_cols[x] for x in ordering]
-        
-        self.chart_cols = dict(enumerate(chart_cols))
+        for idx, col in enumerate(cols):
+            _col = pd.DataFrame(data = col.offsets,
+                                columns = ['offsets'])
+            
+            # If keys is not specified, we will use the enumerated value
+            _col['keys'] = int(keys[idx]) if keys else idx
+            
+            self._cols = self._cols.append(_col)
         
     def __getitem__(self, key):
-        return self.chart_cols[key]
+        return self._cols.query('keys == {}'.format(str(key)))
         
     def __setitem__(self, key, item):
-        self.chart_cols[key] = item
+        self._cols[key] = item
 
 

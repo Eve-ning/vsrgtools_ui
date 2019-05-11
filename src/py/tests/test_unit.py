@@ -26,45 +26,46 @@ class TestChartColumn(unittest.TestCase):
         self.chart_column = ChartColumn(_oflist_1)
     
     def test_init(self):
-        '''Check if sorting worked'''
+        '''Initialization'''
         
-        self.assertTrue(np.array_equal(self.chart_column.offset_list,
+        self.assertTrue(np.array_equal(self.chart_column.offsets,
                                        _oflist_1_sorted))
         
     def test_setter(self):
-        '''Test setting new offsets'''
-        self.chart_column.offset_list = _oflist_2
+        '''Offset Setting'''
+        self.chart_column.offsets = _oflist_2
         
-        self.assertTrue(np.array_equal(self.chart_column.offset_list,
+        self.assertTrue(np.array_equal(self.chart_column.offsets,
                                        _oflist_2_sorted))
         
-        self.chart_column.offset_list = _oflist_1
+        self.chart_column.offsets = _oflist_1
         
     def test_indexing(self):
-        '''Test indexing of column offsets'''
-        self.assertEqual(self.chart_column.offset_list[0],
+        '''Offset Indexing'''
+        self.assertEqual(self.chart_column.offsets[0],
                          min(_oflist_1)) 
       
 class TestChart(unittest.TestCase):
     def setUp(self):
         self.chart_col_1 = ChartColumn(_oflist_1)
         self.chart_col_2 = ChartColumn(_oflist_2)
-        self.chart = Chart(chart_cols = (self.chart_col_1,
-                                         self.chart_col_2))
+        self.chart = Chart(cols = (self.chart_col_1,
+                                   self.chart_col_2))
         
     def test_indexing(self):
-        '''Check if indexing works for Chart'''
-        self.assertTrue(np.array_equal(self.chart[0].offset_list,
+        '''Dataframe Indexing'''
+        self.assertTrue(np.array_equal(self.chart[0]['offsets'],
                                        _oflist_1_sorted))
         
     def test_ordering(self):
         '''Test ordering arg in Chart.__init__'''
-        _chart = Chart(chart_cols = (self.chart_col_1,self.chart_col_2),
-                       ordering = (1,0)) # We reverse the ordering
+        _chart = Chart(cols = (self.chart_col_1, 
+                               self.chart_col_2),
+                       keys = (1,0)) # We reverse the ordering
         
-        self.assertTrue(np.array_equal(_chart[0].offset_list,
+        self.assertTrue(np.array_equal(_chart[0]['offsets'],
                                        _oflist_2_sorted))
-        
+       
         
 
 if __name__ == '__main__':
