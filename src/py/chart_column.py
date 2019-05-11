@@ -11,7 +11,7 @@ class ChartColumn:
     
     def _sort(self):
         '''Sorts the offset_list if _auto_reorder is True'''
-        self._offset_list = np.sort(self._offset_list)
+        self._offsets = np.sort(self._offsets)
            
     def _convert(self, offset_list):
         '''Converts any input into valid offset_list then returns it'''
@@ -25,26 +25,26 @@ class ChartColumn:
            offset_list (list(float convertable)): Offset list to be used in the
            column
         '''
-        self._offset_list = self._convert(offset_list)
+        self._offsets = self._convert(offset_list)
         
         self._sort()
         
     def __getitem__(self, key):
-        return self._offset_list[key]
+        return self._offsets[key]
     
     def __setitem__(self, key, item):
-        self._offset_list[key] = item
+        self._offsets[key] = item
         self._sort()
     
     def append(self, offset):
-        np.append(self._offset_list, float(offset))
+        np.append(self._offsets, float(offset))
         
     @property
     def offset_list(self):
-        return self._offset_list
+        return self._offsets
     
     @offset_list.setter
     def offset_list(self, offset_list):
-        self._offset_list = self._convert(offset_list)
+        self._offsets = self._convert(offset_list)
         self._sort()
         
