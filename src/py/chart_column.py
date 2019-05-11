@@ -40,11 +40,11 @@ class ChartColumn:
         np.append(self._offsets, float(offset))
         
     @property
-    def offset_list(self):
+    def offsets(self):
         return self._offsets
     
-    @offset_list.setter
-    def offset_list(self, offset_list):
+    @offsets.setter
+    def offsets(self, offset_list):
         self._offsets = self._convert(offset_list)
         self._sort()
         
