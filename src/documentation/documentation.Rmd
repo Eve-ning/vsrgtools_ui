@@ -21,63 +21,47 @@ Keep it short, make a simulator that plays VSRG
 
   We want to be able to test out the parameters
 
-# THE PLAN +
-
 4. Simulate the plays and train the machine according to players
 
-# VSRG Chart Interface
+# Goal
 
-We will be trimming out all the unnecessary information that a **note** can hold, such as:
+We want to be able to simulate virtual player's playthroughs regardless of if it's accurate.
+Making it accurate to reality would be the next goal.
 
-- *hitsound*
-- *snap*
-- *scroll speed*
+Our expected output would be something like:
 
-So we will just need 
+```{r echo=F}
+library(knitr)
+ex.offsets = c(1,2,2,3,4)
+ex.keys = c(0,1,2,0,0)
+ex.acc = c(0.9,0.3,0.4,0.7,0.1)
 
-- *column*
-- *offset*
-- *type*
-  
-  *note, long_note_head, long_note_end*
-  
-All of these would be done in Python, then we will import into R.
+ex = cbind(offsets = ex.offsets, keys = ex.keys, 'predicted accuracy' = ex.acc)
 
-# Finger
+kable(ex,caption = "Expected output")
+rm(ex.offsets, ex.keys, ex.acc, ex)
+```
 
-The finger is the hardest to define. We will first look at it from the bigger picture.
+# Accuracy or Deviation
 
-In the end, we want to produce a single output, how **likely** is the person going to hit the note accurately?
+Let's say the player hits the note, **50ms early**, how do we translate that into accuracy? 
 
-It is still a vague definition, ignore the pedantics, we'll develop on it later.
+We will have to map it to a function, which "grades" the deviation, similar to VSRG Judgements.
 
-## Defining Accuracy
+**However**, this deviation holds more meaning than a mapped deviation, as there is no *universal function* to translate deviation into accuracy. Hence, we will focus on deviation instead of accuracy.
+
+## Defining Deviation
 
 When we ask players on what makes them hit a note accurately, it usually narrows down to the most common answers:
 
-- **P**layer Skill
+- Player skill
+- Map difficulty
 
-  **Global Data**
-  This variable can be assumed to be *independent* from the map
-  
-- **S**train (during the map)
+We need to understand that **Player skill** is totally independent of **Map difficulty**. Hence we must enforce that:
 
-  **Relative/Local Data**
-  This variable is relative to how hard the map is
-  
-- **T**ype of note
+**Map difficulty should not be dynamically calculated from player performance**
 
-  **Categorical Data**
-  This variable is dependent on the note type:
-  
-  - Note
-  - Long Note Head
-  - Long Note End
-  
-Let's summarize it with a draft formula
+Let's summarize it with a draft formula, granted, it is watered-down.
 
-$$A = p(s(m),t)$$
-
-This is a vague idea on how it could be calculated.
-
+$$D = p(m(x))$$
 

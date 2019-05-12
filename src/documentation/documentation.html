@@ -393,53 +393,68 @@ $(document).ready(function () {
 <li>Create an environment where both of those <strong>interact</strong></li>
 </ol>
 <p>We want to be able to test out the parameters</p>
-</div>
-<div id="the-plan-1" class="section level1">
-<h1>THE PLAN +</h1>
 <ol start="4" style="list-style-type: decimal">
 <li>Simulate the plays and train the machine according to players</li>
 </ol>
 </div>
-<div id="vsrg-chart-interface" class="section level1">
-<h1>VSRG Chart Interface</h1>
-<p>We will be trimming out all the unnecessary information that a <strong>note</strong> can hold, such as:</p>
-<ul>
-<li><em>hitsound</em></li>
-<li><em>snap</em></li>
-<li><em>scroll speed</em></li>
-</ul>
-<p>So we will just need</p>
-<ul>
-<li><em>column</em></li>
-<li><em>offset</em></li>
-<li><p><em>type</em></p>
-<p><em>note, long_note_head, long_note_end</em></p></li>
-</ul>
-<p>All of these would be done in Python, then we will import into R.</p>
+<div id="goal" class="section level1">
+<h1>Goal</h1>
+<p>We want to be able to simulate virtual player’s playthroughs regardless of if it’s accurate. Making it accurate to reality would be the next goal.</p>
+<p>Our expected output would be something like:</p>
+<table>
+<caption>Expected output</caption>
+<thead>
+<tr class="header">
+<th align="right">offsets</th>
+<th align="right">keys</th>
+<th align="right">predicted accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.9</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">0.3</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">0.4</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">0.7</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">0.1</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="finger" class="section level1">
-<h1>Finger</h1>
-<p>The finger is the hardest to define. We will first look at it from the bigger picture.</p>
-<p>In the end, we want to produce a single output, how <strong>likely</strong> is the person going to hit the note accurately?</p>
-<p>It is still a vague definition, ignore the pedantics, we’ll develop on it later.</p>
-<div id="defining-accuracy" class="section level2">
-<h2>Defining Accuracy</h2>
+<div id="accuracy-or-deviation" class="section level1">
+<h1>Accuracy or Deviation</h1>
+<p>Let’s say the player hits the note, <strong>50ms early</strong>, how do we translate that into accuracy?</p>
+<p>We will have to map it to a function, which “grades” the deviation, similar to VSRG Judgements.</p>
+<p><strong>However</strong>, this deviation holds more meaning than a mapped deviation, as there is no <em>universal function</em> to translate deviation into accuracy. Hence, we will focus on deviation instead of accuracy.</p>
+<div id="defining-deviation" class="section level2">
+<h2>Defining Deviation</h2>
 <p>When we ask players on what makes them hit a note accurately, it usually narrows down to the most common answers:</p>
 <ul>
-<li><p><strong>P</strong>layer Skill</p>
-<p><strong>Global Data</strong> This variable can be assumed to be <em>independent</em> from the map</p></li>
-<li><p><strong>S</strong>train (during the map)</p>
-<p><strong>Relative/Local Data</strong> This variable is relative to how hard the map is</p></li>
-<li><p><strong>T</strong>ype of note</p>
-<p><strong>Categorical Data</strong> This variable is dependent on the note type:</p>
-<ul>
-<li>Note</li>
-<li>Long Note Head</li>
-<li>Long Note End</li>
-</ul></li>
+<li>Player skill</li>
+<li>Map difficulty</li>
 </ul>
-<p>Let’s summarize it with a draft formula</p>
-<p><span class="math display">\[A = p(s(m),t)\]</span></p>
+<p>We need to understand that <strong>Player skill</strong> is totally independent of <strong>Map difficulty</strong>. Hence we must enforce that:</p>
+<p><strong>Map difficulty should not be dynamically calculated from player performance</strong></p>
+<p>Let’s summarize it with a draft formula, granted, it is watered-down.</p>
+<p><span class="math display">\[D = p(m(x))\]</span></p>
 </div>
 </div>
 
