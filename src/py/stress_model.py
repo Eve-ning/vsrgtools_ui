@@ -14,8 +14,7 @@ e.g.
 # | Str | Event |   Func   |
 --+-----+-------+----------+
 0 | 1.0 | Spike | spike(1) |
-1 | 0.9 | Decay | decay(1) |
-3 | 0.7 | Decay | decay(2) | # Take note of the offset
+3 | 0.7 | Decay | decay(3) | # Take note of the offset
 4 | 1.7 | Spike | spike(1) |
 5 | 1.6 | Decay | decay(1) |
 . | ... | ..... | ........ |
@@ -32,7 +31,7 @@ Decay
 '''
 
 class StressModel:
-    '''Creates a simulated stress stressue tracker'''
+    '''Creates a simulated stress tracker'''
 
     def __init__(self,
                  decay_func,
@@ -76,6 +75,9 @@ class StressModel:
         
     @property
     def stress(self):
+        '''Value of stress
+        
+        stress will not go below 0.0'''
         return self._stress
     
     @stress.setter
