@@ -25,19 +25,22 @@ class StressSim:
         self.sm = sm
         
     def simulate(self,
-                 df,
-                 offsets_column_name = "offsets",
-                 events_column_name = "events") -> pd.DataFrame:
+                 df: pd.DataFrame,
+                 spike_column_names = None,
+                 offsets_column_name = "offsets") -> pd.DataFrame:
         '''Simulates the StressModel and appends results to the df
         
         Args:
-            df (DataFrame): Import the DataFrame here.
-                The DataFrame must have the offsets and events column.
+            df (DataFrame): Import the mapped DataFrame here.
+                The DataFrame must have the offsets and parameters column.
+            spike_column_names (list): If there are specific columns to be 
+                passed into the StressModel.spike() function, list them here.
+                
+                If None, all columns except 'offset' passed into the function.
             offsets_column_name (str): In the event that the column names are
                 not the same as the defaults, specify them here.
-            events_column_name (str): ^
+            
         '''
-        
         pass
         
         
