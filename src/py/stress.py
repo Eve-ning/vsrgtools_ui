@@ -10,33 +10,33 @@ class Stress:
 
     def __init__(self,
                  decay_func,
-                 grow_func,
+                 spike_func,
                  val = 0.0):
-        '''Initialize the Stress
+        '''Initialize the Stress class
         
-        Stress will decay by specified decay parameters,
+        val will decay by specified decay parameters,
         decay_perc will act first before decay if perc_first is True.
         
         Args:
-            decay_func (function(val)):
-                Output the result after 1 ms.
-                e.g. decay_func = lambda s: s - 1; decay_func(s) == s - 1
-                function should always decrease val.
+            decay_func (function(val, duration, *args, **kwargs)):
+                Output the result after {{duration}} ms.
+                val and duration are required.
             
-            grow_func (function(val, *args, **kwargs)):
+            spike_func (function(val, *args, **kwargs)):
                 Output the result after trigger.
+                val is required.
                 
-            val (float): val value for that particular Stress, cannot go
-            below 0, anything below will be clipped.
+            val (float): value for stress, cannot go below 0, anything below
+                will be clipped.
         '''
         self._val = val
         self.decay_func = decay_func
-        self.grow_func = grow_func
+        self.spike_func = spike_func
         
-    def grow(self, *args, **kwargs):
+    def spike(self, *args, **kwargs):
         '''Increases the val by defined functions and args'''
         _temp_val = self._val
-        self._val = self.grow_func(self._val, *args, **kwargs)
+        self._val = self.spike_func(self._val, *args, **kwargs)
         print("Grew val from {a} to {b}".format(a = _temp_val,
                                                 b = self._val))
         
@@ -49,16 +49,16 @@ class Stress:
         new = min((new, 0.0))
         self._val = new
 
-def decay(val):
-    return val - 1
+def decay(val, duration):
+    return val - (duration * 1)
 
-def grow(val, add, mult):
+def spike(val, add, mult):
     return (val + add) * mult
 
 f = Stress(decay_func = decay,
-       grow_func = grow,
+       spike_func = spike,
        val = 0.0)
 
-f.grow(add = 1,
+f.spike(add = 1,
        mult = 2)
 
