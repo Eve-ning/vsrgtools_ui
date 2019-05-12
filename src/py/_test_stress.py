@@ -9,14 +9,19 @@ import unittest
 from stress import Stress
 import numpy as np
 
-_oflist_1 = (10,9,8,7,6,4,3,2,1) # 5 is intentionally missing
-_oflist_2 = (10,5,1)
-_oflist_1_sorted = np.array((1,2,3,4,6,7,8,9,10))
-_oflist_2_sorted = np.array((1,5,10))
-
 class TestStress(unittest.TestCase):
     def setUp(self):
-        Stress()
+        def decay(stress, duration):
+            '''Stress decreases by 1 every ms'''
+            return stress - (duration * 1)
+        
+        def spike(stress, add, mult):
+            '''Stress will increase by add and multiply by mult every trigger'''
+            return (stress + add) * mult
+            
+        self.stress = Stress(decay_func = decay,
+                             spike_func = spike,
+                             val = 0.0)
     
     def test_init(self):
         '''Initialization'''
