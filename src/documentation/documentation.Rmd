@@ -63,5 +63,5 @@ We need to understand that **Player skill** is totally independent of **Map diff
 
 Let's summarize it with a draft formula, granted, it is watered-down.
 
-$$D = p(m(x))$$
+$$D = p(m(x))$$ 
 
