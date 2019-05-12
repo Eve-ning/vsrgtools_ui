@@ -4,12 +4,6 @@ Created on Sat May 11 00:41:41 2019
 
 @author: johnc
 """
-import os,sys,inspect
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir) 
-
 import unittest
 
 from chart_column import ChartColumn
