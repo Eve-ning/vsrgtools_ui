@@ -34,11 +34,19 @@ class Stress:
         self.spike_func = spike_func
         
     def spike(self, *args, **kwargs):
-        '''Increases the val by defined functions and args'''
+        '''Spikes val by defined functions and args'''
         _temp_val = self._val
         self._val = self.spike_func(self._val, *args, **kwargs)
         print("Grew val from {a} to {b}".format(a = _temp_val,
                                                 b = self._val))
+        
+    def decay(self, duration, *args, **kwargs):
+        '''Decays val after specified duration'''
+        _temp_val = self._val
+        self._val = self.decay_func(self._val, duration, *args, **kwargs)
+        print("val decayed from {a} to {b} in {d} ms".format(a = _temp_val,
+                                                             b = self._val,
+                                                             d = duration))
         
     @property
     def val(self):
@@ -48,17 +56,3 @@ class Stress:
     def val(self, new):
         new = min((new, 0.0))
         self._val = new
-
-def decay(val, duration):
-    return val - (duration * 1)
-
-def spike(val, add, mult):
-    return (val + add) * mult
-
-f = Stress(decay_func = decay,
-       spike_func = spike,
-       val = 0.0)
-
-f.spike(add = 1,
-       mult = 2)
-
