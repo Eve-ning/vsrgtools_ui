@@ -21,50 +21,56 @@ class ChartParser:
         self._parse_path()
         
     def _parse_path(self):
-        self._chart_format = self.chart_path.split(".")[1]
+        print(self.chart_path)
+        self._chart_format = self.chart_path.split(".")[-1]
     
     def parse_osu(self):
         '''Parses osu file formats'''
         f = open(self.chart_path, 'r')
+        fr = f.readlines()
+        f.close()
         
         # Locate keys
-        keys = list(filter(lambda x: x.startswith('CircleSize:')))[0]
+        keys = list(filter(lambda x: x.startswith('CircleSize:'), fr))[0]
         keys = int(keys.split(':')[1])
         
         # Lambda Function to calculate the actual column
         clm = lambda value: round((int(value) * keys - 256) / 512)
             
-        # Gets the chart and splits it into LNs and NNs
-        chart = list(filter(lambda x: x.count(':') > 4, f))
-        notes_l = list(filter(lambda x: x.count(':') == 4, chart))
-        lnotes_l = list(filter(lambda x: x.count(':') == 5, chart))
+        # Gets the chart and filters it into LNs and Ns
+        chart = list(filter(lambda x: x.count(':') >= 4, fr))
+        
+        ns = list(filter(lambda x: x.count(':') == 4, chart))
+        lns = list(filter(lambda x: x.count(':') == 5, chart))
+        
+        # Remove the trailing colon data
+        # 256,192,8307,128,0,8423[:0:0:0:0:]
+        ns = [n.split(':')[0] for n in ns] 
+        lns = [ln.split(':')[0] for ln in lns]
+        
+        # Split by Comma
+        # 256 192 8307 128 0 8423
+        ns = [n.split(',') for n in ns]
+        lns = [ln.split(',') for ln in lns]
         
         # Convert the lines to values for the notes
-        # Values are in a tuple (Column, Offset)
-        notes = [(clm(x.split(',')[0]), # Gets column
-                        int(x.split(',')[2])) for # Gets offset
-                       x in notes_l]
-        
-        lnotes_h = [(clm(int(x.split(',')[0])), # Gets column
-                           int(x.split(',')[2])) for # Gets offset
-                          x in lnotes_l]
-        
-        lnotes_t = [(clm(int(x.split(',')[0])), # Gets column
-                           int(x.split(',')[5])) for # Gets offset
-                          x in lnotes_l]
+        # Values are in a tuple (Offset, Column)
+        ns = [(int(n[2]), clm(n[0])) for n in ns]
+        lnhs = [(int(ln[2]), clm(ln[0])) for ln in lns]
+        lnts = [(int(ln[5]), clm(ln[0])) for ln in lns]
         
         # Coerce to DataFrames
-        notes_df = pd.DataFrame(notes, columns = ['columns', 'offsets'])
-        notes_df['types'] = 'note'
+        n_df = pd.DataFrame(ns, columns = ['offsets', 'columns'])
+        n_df['types'] = 'note'
         
-        lnotes_h_df = pd.DataFrame(lnotes_h, columns = ['columns', 'offsets'])
-        lnotes_h_df['types'] = 'lnoteh'
+        lnh_df = pd.DataFrame(lnhs, columns = ['offsets', 'columns'])
+        lnh_df['types'] = 'lnoteh'
         
-        lnotes_t_df = pd.DataFrame(lnotes_t, columns = ['columns', 'offsets'])
-        lnotes_t_df['types'] = 'lnotet'
+        lnt_df = pd.DataFrame(lnts, columns = ['offsets', 'columns'])
+        lnt_df['types'] = 'lnotet'
         
         # Join all together
-        chart_df = notes_df.append([lnotes_h_df, lnotes_t_df])
+        chart_df = n_df.append([lnh_df, lnt_df])
         
         return chart_df
         
@@ -92,5 +98,5 @@ class ChartParser:
         elif (f == "bms"):
             return self.parse_bms()
         else:
-            raise Exception("Auto Parsing Error.\
-                            Use specific functions instead.")
+            raise Exception("Unsupported Extension .{ext} Error.\
+                            Use specific functions instead.".format(ext = f))
