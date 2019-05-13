@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(magrittr)
 ```
 
 # Introduction
@@ -31,7 +33,6 @@ Making it accurate to reality would be the next goal.
 Our expected output would be something like:
 
 ```{r echo=F}
-library(knitr)
 ex.offsets = c(1,2,2,3,4)
 ex.keys = c(0,1,2,0,0)
 ex.acc = c(0.9,0.3,0.4,0.7,0.1)
@@ -64,4 +65,71 @@ We need to understand that **Player skill** is totally independent of **Map diff
 Let's summarize it with a draft formula, granted, it is watered-down.
 
 $$D = p(m(x))$$ 
+# Process
+
+- Chart Input
+- Chart Parser
+- Stress Mapper
+  - Stress Maps
+- Stress Simulator
+  - Stress Model
+    - Spike Function
+    - Decay Function
+- Stress Transfer
+  - Stress Hand
+    - Transfer Function
+  - Stress Body
+    - Transfer Function
+- Stress Pattern
+
+## Chart Input
+This is where the user imports their map.
+
+## Chart Parser
+As to make it accessible for all users, we need to parse the most common types of maps
+```{r echo=F}
+p.parse <- data.frame(offsets = c(1,2,2,3,4),
+                      keys = c(0,1,2,0,0),
+                      types = c("Note",
+                                "Note",
+                                "Note",
+                                "Long Note Head",
+                                "Long Note Tail"))
+
+
+kable(p.parse, caption = 'Example Parsed Chart')
+```
+
+## Stress Mapper
+Stress Mapper joins maps created by the user to the parsed map.
+
+### Stress Maps
+Stress Maps are user-defined parameter maps for the spike function later.
+
+```{r}
+p.mapping <- data.frame('types' = c('Note', 'Long Note Head', 'Long Note Tail'),
+                        'adds' = c(1, 2, 3),
+                        'mults' = c(1.1, 1.2, 1.3))
+
+kable(p.mapping, caption="Example Mapping")
+
+p.map <- merge(x=p.parse, y=p.mapping, by='types')
+p.map <- p.map[order(p.map$offsets),]
+p.map
+
+kable(p.map, caption="Example Map", row.names = F)
+```
+
+## Stress Simulator
+This takes the 
+### Stress Model
+#### Spike Function
+#### Decay Function
+## Stress Transfer
+### Stress Hand
+#### Transfer Function
+### Stress Body
+#### Transfer Function
+## Stress Pattern
+
 
