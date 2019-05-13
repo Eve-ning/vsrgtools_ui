@@ -9,16 +9,6 @@ import numpy as np
 
 class ChartColumn:
     
-    def _sort(self):
-        '''Sorts the offset_list if _auto_reorder is True'''
-        self._offsets = np.sort(self._offsets)
-           
-    def _convert(self, offset_list):
-        '''Converts any input into valid offset_list then returns it'''
-        # Map all into float
-        offset_list = list(map(float, offset_list))
-        return np.array(offset_list)
-    
     def __init__(self, offset_list: list):
         '''
         Args:
@@ -28,6 +18,16 @@ class ChartColumn:
         self._offsets = self._convert(offset_list)
         
         self._sort()
+        
+    def _sort(self):
+        '''Sorts the offset_list if _auto_reorder is True'''
+        self._offsets = np.sort(self._offsets)
+           
+    def _convert(self, offset_list):
+        '''Converts any input into valid offset_list then returns it'''
+        # Map all into float
+        offset_list = list(map(float, offset_list))
+        return np.array(offset_list)
         
     def __getitem__(self, key):
         return self._offsets[key]
