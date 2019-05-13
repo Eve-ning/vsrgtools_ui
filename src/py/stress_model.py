@@ -69,24 +69,26 @@ class StressModel:
         new = max((new, 0.0))
         self._stress = new
         
-    def spike(self, apply=True, *args, **kwargs):
+    def spike(self, apply=True, echo=False, *args, **kwargs):
         '''Spikes stress by defined functions and args'''
         _old_stress = self._stress
         _new_stress = self.spike_func(self._stress, *args, **kwargs)
-        print("spike\t{a:.1f}\t{b:.1f}".format(
-                a = _old_stress, b = _new_stress))
+        if (echo):
+            print("spike\t{a:.1f}\t{b:.1f}".format(
+                    a = _old_stress, b = _new_stress))
         
         if (apply):
             self.stress = _new_stress
         
         return _new_stress
         
-    def decay(self, duration, apply=True, *args, **kwargs):
+    def decay(self, duration, apply=True, echo=False, *args, **kwargs):
         '''Decays stress after specified duration'''
         _old_stress = self._stress
         _new_stress = self.decay_func(self._stress, duration, *args, **kwargs)
-        print("decay\t{a:.1f}\t{b:.1f}\t{d:.1f}ms".format(
-                a = _old_stress, b = _new_stress, d = duration))
+        if (echo):
+            print("decay\t{a:.1f}\t{b:.1f}\t{d:.1f}ms".format(
+                    a = _old_stress, b = _new_stress, d = duration))
         
         if (apply):
             self.stress = _new_stress
