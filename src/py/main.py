@@ -9,17 +9,36 @@ Created on Mon May 13 13:28:14 2019
 
 from chart_parser import ChartParser
 from stress_mapper import StressMapper
+from stress_sim import StressSim
+from stress_model import StressModel
 import pandas as pd
 
-file_path = "../osu/stargazer - dreamer (Evening) [wander].osu"
-chart = ChartParser(file_path)
-chart = chart.parse_auto()
+def run_simulation(file_path):
+    chart = ChartParser(file_path)
+    chart = chart.parse_auto()
+    
+    # StressMapping DataFrame
+    sm_df = pd.DataFrame([['note',   50, 1],
+                          ['lnoteh', 50, 1],
+                          ['lnotet', 50, 1]], columns = ['types', 'adds', 'mults'])
+    
+    smp = StressMapper(sm_df)
+    chart = smp.map_over(chart)
+    
+    # Create Decay and Spike Functions
+    def decay(stress, duration):
+        return stress / (2 ** (duration / 1000))
+    
+    def spike(stress, adds, mults):
+        return (stress + adds) * mults
+    
+    smd = StressModel(decay_func = decay,
+                      spike_func = spike,
+                      stress = 0.0)
+    
+    ss = StressSim(smd)
+    
+    chart = ss.simulate(chart)
 
-# StressMapping DataFrame
-sm_df = pd.DataFrame([['note',   10, 1.1],
-                      ['lnoteh', 5,  1.1],
-                      ['lnotet', 5,  1.1]], columns = ['types', 'add', 'mult'])
+    return chart
 
-sm = StressMapper(sm_df)
-
-chart = sm.map_over(chart)
