@@ -12,39 +12,56 @@ Stress Mapper looks at the note type, and assigns the spike parameters
 import pandas as pd
 
 class StressMapper:
-    '''This class maps types to specified parameters'''
+    '''This class maps types to specified parameters
+    
+    Maps must have 'types' column
+        
+    Args:
+        mapping (DataFrame): DataFrame used to merge with the provided 
+            DataFrame in map_over.
+        Columns:
+        types (str): This defines the type name to be referenced during 
+            mapping.
+        *args: The other columns are used to designate user-defined 
+            columns. This must also be in-line with the function arguments
+            in StressModel.
+    '''
 
-    def __init__(self):
-        self._mapping = pd.DataFrame(data=None,
-                                     columns=["types"])
+    def __init__(self, mapping = None):
+        if (not mapping):
+            self._mapping = pd.DataFrame(data=None,
+                                         columns=["types"])
+        else:
+            self._assert_mapping(mapping)
+            self._mapping = mapping
+    
+    def _assert_mapping(self, new):
+        '''Asserts if the new mapping DataFrame is valid
+        
+        Raises an Exception if invalid.'''
+        
+        if (not "types" in list(new)):
+            raise Exception("Column 'types' must be included in the\
+                            DataFrame.")
     
     def map_over(self,
-                 df):
+                 df: pd.DataFrame):
         '''Maps over the DataFrame, appending new columns for joined columns
         
         Args:
             df (DataFrame): DataFrame to map to.
         '''
-    
+        
+        return pd.merge(left = df, right = self._mapping,
+                        how = 'inner', on = 'types')        
     @property
     def mapping(self):
-        '''Maps must have 'types' column
+        '''Sets and Gets the mapping DataFrame
         
-        Columns:
-            types (str): This defines the type name to be referenced during 
-                mapping.
-            *args: The other columns are used to designate user-defined 
-                columns. This must also be in-line with the function arguments
-                in StressModel.
-        '''
+        Specifications of DataFrame in help(StressMapper)'''
         return self._mapping
     
     @mapping.setter
     def mapping(self, new):
-        if (not "types" in list(new)):
-            raise Exception("Column 'types' must be included in the\
-                            DataFrame.")
-        else:
-            self._mapping = new
-
-help(StressMapper)
+        self._assert_mapping(new)
+        self._mapping = new
