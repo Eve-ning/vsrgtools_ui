@@ -27,13 +27,9 @@ class StressMapper:
             in StressModel.
     '''
 
-    def __init__(self, mapping = None):
-        if (not mapping):
-            self._mapping = pd.DataFrame(data=None,
-                                         columns=["types"])
-        else:
-            self._assert_mapping(mapping)
-            self._mapping = mapping
+    def __init__(self, mapping):
+        self._assert_mapping(mapping)
+        self._mapping = mapping
     
     def _assert_mapping(self, new):
         '''Asserts if the new mapping DataFrame is valid
