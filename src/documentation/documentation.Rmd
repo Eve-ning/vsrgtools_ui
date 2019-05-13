@@ -115,14 +115,57 @@ kable(p.mapping, caption="Example Mapping")
 
 p.map <- merge(x=p.parse, y=p.mapping, by='types')
 p.map <- p.map[order(p.map$offsets),]
-p.map
 
 kable(p.map, caption="Example Map", row.names = F)
 ```
 
 ## Stress Simulator
-This takes the 
+Stress Simulator takes the arguments mapped and runs through a simulation of the chart, appending the results by column.
+
+The spike and decay function is defined by the stress model.
+
 ### Stress Model
+The stress model defines spike and decay function
+Assuming all stress starts from **0**, we can somewhat simulate `keys = 0`
+
+```{python}
+# An Example of a spike function
+def spike(stress: float,
+          add: float,
+          mult: float):
+  return (stress + add) * mult
+
+# An Example of a decay function
+def decay(stress: float,
+          duration: float,
+          strength: float):
+  return stress - (duration * strength)
+  
+stress_0 = 0
+
+# Offset 1
+stress_1 = spike(stress = stress_0, add = 1, mult = 1.1)
+
+# Offset 2
+stress_2 = decay(stress = stress_1, duration = 1, strength = 1)
+
+# Offset 3
+stress_3 = spike(stress = stress_2, add = 2, mult = 1.2)
+
+# Offset 4
+stress_4 = spike(stress = stress_3, add = 3, mult = 1.3)
+                 
+print("{a:.1f} -> {b:.1f} -> {c:.1f} -> {d:.1f} -> {e:.1f}".format(
+      a = stress_0,
+      b = stress_1,
+      c = stress_2,
+      d = stress_3,
+      e = stress_4))
+
+```
+
+
+
 #### Spike Function
 #### Decay Function
 ## Stress Transfer

@@ -569,14 +569,8 @@ kable(p.mapping, caption=&quot;Example Mapping&quot;)</code></pre>
 </table>
 <pre class="r"><code>p.map &lt;- merge(x=p.parse, y=p.mapping, by=&#39;types&#39;)
 p.map &lt;- p.map[order(p.map$offsets),]
-p.map</code></pre>
-<pre><code>##            types offsets keys adds mults
-## 3           Note       1    0    1   1.1
-## 4           Note       2    1    1   1.1
-## 5           Note       2    2    1   1.1
-## 1 Long Note Head       3    0    2   1.2
-## 2 Long Note Tail       4    0    3   1.3</code></pre>
-<pre class="r"><code>kable(p.map, caption=&quot;Example Map&quot;, row.names = F)</code></pre>
+
+kable(p.map, caption=&quot;Example Map&quot;, row.names = F)</code></pre>
 <table>
 <caption>Example Map</caption>
 <thead>
@@ -630,7 +624,69 @@ p.map</code></pre>
 </div>
 <div id="stress-simulator" class="section level2">
 <h2>Stress Simulator</h2>
-<p>This takes the ### Stress Model #### Spike Function #### Decay Function ## Stress Transfer ### Stress Hand #### Transfer Function ### Stress Body #### Transfer Function ## Stress Pattern</p>
+<p>Stress Simulator takes the arguments mapped and runs through a simulation of the chart, appending the results by column.</p>
+<p>The spike and decay function is defined by the stress model.</p>
+<div id="stress-model" class="section level3">
+<h3>Stress Model</h3>
+<p>The stress model defines spike and decay function Assuming all stress starts from <strong>0</strong>, we can somewhat simulate <code>keys = 0</code></p>
+<pre class="python"><code># An Example of a spike function
+def spike(stress: float,
+          add: float,
+          mult: float):
+  return (stress + add) * mult
+
+# An Example of a decay function
+def decay(stress: float,
+          duration: float,
+          strength: float):
+  return stress - (duration * strength)
+  
+stress_0 = 0
+
+# Offset 1
+stress_1 = spike(stress = stress_0, add = 1, mult = 1.1)
+
+# Offset 2
+stress_2 = decay(stress = stress_1, duration = 1, strength = 1)
+
+# Offset 3
+stress_3 = spike(stress = stress_2, add = 2, mult = 1.2)
+
+# Offset 4
+stress_4 = spike(stress = stress_3, add = 3, mult = 1.3)
+                 
+print(&quot;{a:.1f} -&gt; {b:.1f} -&gt; {c:.1f} -&gt; {d:.1f} -&gt; {e:.1f}&quot;.format(
+      a = stress_0,
+      b = stress_1,
+      c = stress_2,
+      d = stress_3,
+      e = stress_4))</code></pre>
+<pre><code>## 0.0 -&gt; 1.1 -&gt; 0.1 -&gt; 2.5 -&gt; 7.2</code></pre>
+<div id="spike-function" class="section level4">
+<h4>Spike Function</h4>
+</div>
+<div id="decay-function" class="section level4">
+<h4>Decay Function</h4>
+</div>
+</div>
+</div>
+<div id="stress-transfer" class="section level2">
+<h2>Stress Transfer</h2>
+<div id="stress-hand" class="section level3">
+<h3>Stress Hand</h3>
+<div id="transfer-function" class="section level4">
+<h4>Transfer Function</h4>
+</div>
+</div>
+<div id="stress-body" class="section level3">
+<h3>Stress Body</h3>
+<div id="transfer-function-1" class="section level4">
+<h4>Transfer Function</h4>
+</div>
+</div>
+</div>
+<div id="stress-pattern" class="section level2">
+<h2>Stress Pattern</h2>
 </div>
 </div>
 
