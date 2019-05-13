@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
 library(knitr)
 library(magrittr)
 ```
@@ -62,42 +64,43 @@ We need to understand that **Player skill** is totally independent of **Map diff
 
 **Map difficulty should not be dynamically calculated from player performance**
 
-Let's summarize it with a draft formula, granted, it is watered-down.
-
-$$D = p(m(x))$$ 
 # Process
+I have created a draft simulation, let's run through how it works
+```{r echo=F}
+# Libraries Required
+library(reticulate)
+library(ggplot2)
+library(magrittr)
+library(dplyr)
 
-- Chart Input
-- Chart Parser
-- Stress Mapper
-  - Stress Maps
-- Stress Simulator
-  - Stress Model
-    - Spike Function
-    - Decay Function
-- Stress Transfer
-  - Stress Hand
-    - Transfer Function
-  - Stress Body
-    - Transfer Function
-- Stress Pattern
+# os needs to be on the correct directory to do source_python
+os <- import('os')
+os$chdir('../py/')
+
+# Load required python files
+source_python("chart_parser.py")
+source_python("stress_mapper.py")
+source_python("stress_sim.py")
+source_python("stress_model.py")
+```
 
 ## Chart Input
-This is where the user imports their map.
+This is where the user imports their map. Here are some samples I used
+
+```{r}
+osu.hypnotize <- "../osu/Camellia VS. lapix - Hypnotize (Evening) [bool worldwpdrive(const Entity &user);].osu"
+osu.stargazer <- "../osu/stargazer - dreamer (Evening) [wander].osu"
+osu.maniera <- "../osu/D(ABE3) - MANIERA (iJinjin) [Masterpiece].osu"
+```
 
 ## Chart Parser
 As to make it accessible for all users, we need to parse the most common types of maps
-```{r echo=F}
-p.parse <- data.frame(offsets = c(1,2,2,3,4),
-                      keys = c(0,1,2,0,0),
-                      types = c("Note",
-                                "Note",
-                                "Note",
-                                "Long Note Head",
-                                "Long Note Tail"))
+```{r}
+# Read the map into a DataFrame
+chart <- ChartParser(osu.maniera)
+chart <- chart$parse_auto()
 
-
-kable(p.parse, caption = 'Example Parsed Chart')
+kable(head(chart, 10), caption = 'Example Parsed Chart')
 ```
 
 ## Stress Mapper
@@ -107,16 +110,18 @@ Stress Mapper joins maps created by the user to the parsed map.
 Stress Maps are user-defined parameter maps for the spike function later.
 
 ```{r}
-p.mapping <- data.frame('types' = c('Note', 'Long Note Head', 'Long Note Tail'),
-                        'adds' = c(1, 2, 3),
-                        'mults' = c(1.1, 1.2, 1.3))
+# Create StressMapping with a DataFrame
+sm_df = data.frame(types = c('note','lnoteh','lnotet'),
+                   adds = c(50, 50, 50),
+                   mults = c(1, 1, 1))
 
-kable(p.mapping, caption="Example Mapping")
+smp = StressMapper(sm_df)
 
-p.map <- merge(x=p.parse, y=p.mapping, by='types')
-p.map <- p.map[order(p.map$offsets),]
+# Map over to the chart
+chart = smp$map_over(chart)
 
-kable(p.map, caption="Example Map", row.names = F)
+kable(sm_df, caption="Example Mapping", row.names = F)
+kable(head(chart, 10), caption="Example Mapped", row.names = F)
 ```
 
 ## Stress Simulator
@@ -128,46 +133,36 @@ The spike and decay function is defined by the stress model.
 The stress model defines spike and decay function
 Assuming all stress starts from **0**, we can somewhat simulate `keys = 0`
 
-```{python}
-# An Example of a spike function
-def spike(stress: float,
-          add: float,
-          mult: float):
-  return (stress + add) * mult
+```{r}
+# Specify Decay and Spike Functions
+decay <- function(stress, duration) {
+  return(stress / (2 ** (duration / 1000)))
+}
 
-# An Example of a decay function
-def decay(stress: float,
-          duration: float,
-          strength: float):
-  return stress - (duration * strength)
-  
-stress_0 = 0
+spike <- function(stress, adds, mults) {
+  return (stress + adds) * mults
+}
 
-# Offset 1
-stress_1 = spike(stress = stress_0, add = 1, mult = 1.1)
+# Create StressModel
+smd = StressModel(decay_func = decay,
+                  spike_func = spike,
+                  stress = 0.0)
 
-# Offset 2
-stress_2 = decay(stress = stress_1, duration = 1, strength = 1)
+# Integrate into Stress Simulator
+ss = StressSim(smd)
 
-# Offset 3
-stress_3 = spike(stress = stress_2, add = 2, mult = 1.2)
-
-# Offset 4
-stress_4 = spike(stress = stress_3, add = 3, mult = 1.3)
-                 
-print("{a:.1f} -> {b:.1f} -> {c:.1f} -> {d:.1f} -> {e:.1f}".format(
-      a = stress_0,
-      b = stress_1,
-      c = stress_2,
-      d = stress_3,
-      e = stress_4))
-
+# Run the Simulation and assign new dataframe to chart.stress
+chart.stress = ss$simulate(chart)
 ```
 
-
-
-#### Spike Function
-#### Decay Function
+```{r}
+# Plot out chart
+ggplot(chart.stress) +
+  aes(x = offsets,
+      y = stress) +
+  geom_smooth(aes(group = columns, color = factor(columns)),
+              se = F)
+```
 ## Stress Transfer
 ### Stress Hand
 #### Transfer Function
