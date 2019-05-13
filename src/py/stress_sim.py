@@ -7,6 +7,7 @@ Created on Sun May 12 00:38:03 2019
 
 from stress_model import StressModel 
 import pandas as pd
+import copy
 
 class StressSim:
     '''Creates a simulation of stress
@@ -24,22 +25,94 @@ class StressSim:
         
     def simulate(self,
                  df: pd.DataFrame,
-                 spike_column_names = None,
-                 offsets_column_name = "offsets") -> pd.DataFrame:
+                 interval = 1000,
+                 spike_columns = None,
+                 offsets_column = "offsets") -> pd.DataFrame:
         '''Simulates the StressModel and appends results to the df
         
         Args:
             df (DataFrame): Import the mapped DataFrame here.
                 The DataFrame must have the offsets and parameters column.
-            spike_column_names (list): If there are specific columns to be 
+            interval (int): In ms, the time span used to calculate points in
+                decay. Lower values mean more intermediate points.
+            spike_columns (list): If there are specific columns to be 
                 passed into the StressModel.spike() function, list them here.
                 
-                If None, all columns except 'offset' passed into the function.
-            offsets_column_name (str): In the event that the column names are
+                If None, columns are automatically detected.
+            offsets_column (str): In the event that the column names are
                 not the same as the defaults, specify them here.
             
         '''
-        pass
+        
+        # Automatically detect new columns
+        if (not spike_columns):
+            ignore = ['offsets', 'columns', 'types']
+            spike_columns = list(filter(lambda x: x not in ignore, list(df)))
+           
+        # Empty DataFrame to hold results
+        simdf = pd.DataFrame(columns=['offsets', 'stress'])
+        
+        # Group by columns to simulate separately
+        df = df.sort_values(by = 'offsets')
+        dfg = df.groupby(by = 'columns')
+        for i, g in dfg:
+            simdf = simdf.append(self._simulate_group(g,
+                                                      interval,
+                                                      i,
+                                                      spike_columns))
+        
+        return simdf
+    
+    def _simulate_group(self,
+                        group: pd.DataFrame,
+                        interval,
+                        column,
+                        spike_columns):
+        '''Simulates for a particular group
+        
+        Args:
+            group (DataFrame): A DataFrame
+            column (int): Column name/key
+            ... : Refer to help(StressSim.simulate)
+        '''
+        
+        smd_ = copy.deepcopy(self.smd) 
+        prev_offset = 0
+        simdf = pd.DataFrame(columns=['offsets', 'stress'])
+        
+        # For each row, we will:
+        # Append rows to simdf by specified interval if no notes are hit
+        # Append rows before and after the spike
+        for r in group.itertuples():
+            # Increase offsets by interval until next note is in range
+            _offset = prev_offset # This _offset is only used in interval
+            while (_offset + interval < r.offsets):
+                _offset += interval
+                smd_.decay(_offset - prev_offset, apply=False)
+                
+            ## Decay first
+            smd_.decay(r.offsets - prev_offset,
+                       apply=True)
+            simdf = simdf.append({
+                    'offsets': r.offsets,
+                    'stress': smd_.stress
+                    }, ignore_index = True)
+    
+            ## Spike next
+            ### This extracts columns from r that match spike_columns
+            rdict = {k:v for k,v in r._asdict().items() if k in spike_columns}
+            
+            smd_.spike(**rdict, # Unpack r dictionary
+                       apply=True)
+            simdf = simdf.append({
+                    'offsets': r.offsets,
+                    'stress': smd_.stress
+                    }, ignore_index = True)
+            
+            # Update prev_offset with current one
+            prev_offset = r.offsets
+        
+        return simdf
         
         
         
