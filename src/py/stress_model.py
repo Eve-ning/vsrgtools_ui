@@ -57,20 +57,29 @@ class StressModel:
         self.decay_func = decay_func
         self.spike_func = spike_func
         
-    def spike(self, *args, **kwargs):
+    def spike(self, apply=True, *args, **kwargs):
         '''Spikes stress by defined functions and args'''
-        _temp_stress = self._stress
-        self._stress = self.spike_func(self._stress, *args, **kwargs)
-        print("Grew stress from {a} to {b}".format(a = _temp_stress,
-                                                b = self._stress))
+        _old_stress = self._stress
+        _new_stress = self.spike_func(self._stress, *args, **kwargs)
+        print("Grew stress from {a} to {b}".format(
+                a = _old_stress, b = _new_stress))
         
-    def decay(self, duration, *args, **kwargs):
+        if (apply):
+            self._stress = _new_stress
+        
+        return _new_stress
+        
+    def decay(self, duration, apply=True, *args, **kwargs):
         '''Decays stress after specified duration'''
-        _temp_stress = self._stress
-        self._stress = self.decay_func(self._stress, duration, *args, **kwargs)
-        print("stress decayed from {a} to {b} in {d} ms".format(a = _temp_stress,
-                                                             b = self._stress,
-                                                             d = duration))
+        _old_stress = self._stress
+        _new_stress = self.decay_func(self._stress, duration, *args, **kwargs)
+        print("stress decayed from {a} to {b} in {d} ms".format(
+                a = _old_stress, b = _new_stress, d = duration))
+        
+        if (apply):
+            self._stress = _new_stress
+            
+        return _new_stress
         
     @property
     def stress(self):
