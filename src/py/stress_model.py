@@ -31,29 +31,28 @@ Decay
 '''
 
 class StressModel:
-    '''Creates a simulated stress tracker'''
-
+    '''Creates a simulated stress tracker
+        
+    stress will decay by specified decay parameters,
+    decay_perc will act first before decay if perc_first is True.
+    
+    Args:
+        decay_func (function(stress, duration, *args, **kwargs)):
+            Output the result after {{duration}} ms.
+            stress and duration are required.
+        
+        spike_func (function(stress, *args, **kwargs)):
+            Output the result after trigger.
+            stress is required.
+            
+        stress (float): stressue for stress, cannot go below 0, anything below
+            will be clipped.
+    '''
     def __init__(self,
                  decay_func,
                  spike_func,
                  stress = 0.0):
-        '''Initialize the Stress class
         
-        stress will decay by specified decay parameters,
-        decay_perc will act first before decay if perc_first is True.
-        
-        Args:
-            decay_func (function(stress, duration, *args, **kwargs)):
-                Output the result after {{duration}} ms.
-                stress and duration are required.
-            
-            spike_func (function(stress, *args, **kwargs)):
-                Output the result after trigger.
-                stress is required.
-                
-            stress (float): stressue for stress, cannot go below 0, anything below
-                will be clipped.
-        '''
         self._stress = stress
         self.decay_func = decay_func
         self.spike_func = spike_func

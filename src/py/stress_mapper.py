@@ -16,7 +16,7 @@ class StressMapper:
 
     def __init__(self):
         self._mapping = pd.DataFrame(data=None,
-                                     columns=["offsets"])
+                                     columns=["types"])
     
     def map_over(self,
                  df):

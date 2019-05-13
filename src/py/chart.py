@@ -13,15 +13,16 @@ class Chart:
     
     Attributes:
         chart_cols (dict): Access columns with the key being the index.
+    Args:
+            cols (list(ChartColumn)): list of chart columns
+            keys (list(int)): list of integers to indicate keys
+
     """
     def __init__(self,
                  cols,
                  keys = None):
-        """
-        Args:
-            cols (list(ChartColumn)): list of chart columns
-            keys (list(int)): list of integers to indicate keys
-        """
+
+        
         self._cols = pd.DataFrame(data = (),
                                   columns = ['offsets', 'keys'])
         

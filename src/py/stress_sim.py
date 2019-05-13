@@ -13,15 +13,13 @@ class StressSim:
     
     class Stress only works as a basic interface for the value, class StressSim
     will interact with a pd.DataFrame to generate StressModel.stress results
+    
+    Args:
+        sm (StressModel): Import the Stress Model here.
     '''
 
     def __init__(self,
                  sm: SM):
-        '''Initialize the StressSim
-        
-        Args:
-            sm (StressModel): Import the Stress Model here.
-        '''
         self.sm = sm
         
     def simulate(self,
