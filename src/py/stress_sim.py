@@ -5,7 +5,7 @@ Created on Sun May 12 00:38:03 2019
 @author: johnc
 """
 
-from stress_model import StressModel as SM
+from stress_model import StressModel 
 import pandas as pd
 
 class StressSim:
@@ -19,8 +19,8 @@ class StressSim:
     '''
 
     def __init__(self,
-                 sm: SM):
-        self.sm = sm
+                 smd: StressModel):
+        self.smd = smd
         
     def simulate(self,
                  df: pd.DataFrame,
