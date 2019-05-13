@@ -70,7 +70,7 @@ class ChartParser:
         lnt_df['types'] = 'lnotet'
         
         # Join all together
-        chart_df = n_df.append([lnh_df, lnt_df])
+        chart_df = n_df.append([lnh_df, lnt_df], sort=True)
         
         return chart_df
         
