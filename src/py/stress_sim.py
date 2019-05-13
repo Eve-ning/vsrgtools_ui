@@ -112,6 +112,8 @@ class StressSim:
             # Update prev_offset with current one
             prev_offset = r.offsets
         
+        # Add column to indicate column number
+        simdf['columns'] = column
         return simdf
         
         
