@@ -8,6 +8,7 @@ Created on Sun May 12 00:38:03 2019
 from stress_model import StressModel 
 import pandas as pd
 import copy
+import itertools
 
 class StressSim:
     '''Creates a simulation of stress
@@ -54,10 +55,10 @@ class StressSim:
         dfg = df.groupby(by = 'columns')
         
         stress_l = []
-        
         for i, g in dfg:
-            [stress_l.append(i) for
-             i in self._simulate_group(g, interval, i, spike_columns)]
+            stress_l.append(self._simulate_group(g, interval, i, spike_columns))
+            
+        stress_l = list(itertools.chain.from_iterable(stress_l))
         
         # Empty DataFrame to hold results
         simdf = pd.DataFrame(stress_l,
