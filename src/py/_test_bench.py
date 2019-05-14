@@ -27,6 +27,14 @@ class main:
     def __init__(self, chart_path):
         self.chart_path = chart_path
         self.chart = None
+        self.note_add = 50
+        self.note_mult = 1
+        self.lnoteh_add = 50
+        self.lnoteh_mult = 1
+        self.lnotet_add = 50
+        self.lnotet_mult = 1
+        self.decay_a = 2
+        self.decay_b = 1000
     
 
     @benchmark
@@ -38,9 +46,9 @@ class main:
     @benchmark
     def _stress_mapper(self):
         # Create StressMapping with a DataFrame
-        sm_df = pd.DataFrame([['note',   50, 1],
-                              ['lnoteh', 50, 1],
-                              ['lnotet', 50, 1]],
+        sm_df = pd.DataFrame([['note', self.note_add, self.note_mult],
+                              ['lnoteh', self.lnoteh_add, self.lnoteh_mult],
+                              ['lnotet', self.lnotet_add, self.lnotet_mult]],
                              columns = ['types', 'adds', 'mults'])
         
         smp = StressMapper(sm_df)
@@ -52,7 +60,7 @@ class main:
     def _stress_model(self):
         # Specify Decay and Spike Functions
         def decay(stress, duration):
-            return(stress / (2 ** (duration / 1000)))
+            return(stress / (self.decay_a ** (duration / self.decay_b)))
         def spike(stress, adds, mults):
             return (stress + adds) * mults
     
