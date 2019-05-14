@@ -131,7 +131,6 @@ The spike and decay function is defined by the stress model.
 
 ### Stress Model
 The stress model defines spike and decay function
-Assuming all stress starts from **0**, we can somewhat simulate `keys = 0`
 
 ```{r}
 # Specify Decay and Spike Functions
