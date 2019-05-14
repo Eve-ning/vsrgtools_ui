@@ -49,18 +49,19 @@ class StressSim:
             ignore = ['offsets', 'columns', 'types']
             spike_columns = list(filter(lambda x: x not in ignore, list(df)))
            
-        # Empty DataFrame to hold results
-        simdf = pd.DataFrame(columns=['offsets', 'stress'])
-        
         # Group by columns to simulate separately
         df = df.sort_values(by = 'offsets')
         dfg = df.groupby(by = 'columns')
-        for i, g in dfg:
-            simdf = simdf.append(self._simulate_group(g,
-                                                      interval,
-                                                      i,
-                                                      spike_columns))
         
+        stress_l = []
+        
+        for i, g in dfg:
+            [stress_l.append(i) for
+             i in self._simulate_group(g, interval, i, spike_columns)]
+        
+        # Empty DataFrame to hold results
+        simdf = pd.DataFrame(stress_l,
+                             columns=['offsets', 'stress', 'columns'])
         return simdf
     
     def _simulate_group(self,
@@ -95,7 +96,7 @@ class StressSim:
             smd_.decay(r.offsets - prev_offset,
                        apply=True)
             
-            stress_l.append((r.offsets, smd_.stress))
+            stress_l.append((r.offsets, smd_.stress, column))
     
             ## Spike next
             ### This extracts columns from r that match spike_columns
@@ -103,17 +104,14 @@ class StressSim:
             
             smd_.spike(**rdict, # Unpack r dictionary
                        apply=True)
-            stress_l.append((r.offsets, smd_.stress))
+            stress_l.append((r.offsets, smd_.stress, column))
             
             # Update prev_offset with current one
             prev_offset = r.offsets
         
         # end for
         
-        simdf = pd.DataFrame(stress_l, columns=['offsets', 'stress'])
-        # Add column to indicate column number
-        simdf['columns'] = column
-        return simdf
+        return stress_l
         
         
         
