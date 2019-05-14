@@ -12,6 +12,7 @@ from stress_sim import StressSim
 from stress_model import StressModel
 import pandas as pd
 from datetime import datetime
+import feather
 
 def benchmark(f):
     def wrapper(*args, **kwargs):
@@ -22,7 +23,7 @@ def benchmark(f):
         print("{n} \t {t}".format(n = f.__name__, t = elapsed))
     return wrapper
     
-class main:
+class Simulator:
     
     def __init__(self, chart_path):
         self.chart_path = chart_path
@@ -35,7 +36,10 @@ class main:
         self.lnotet_mult = 1
         self.decay_a = 2
         self.decay_b = 1000
+        self.interval = 1000
     
+    def export_self(self, name):
+        feather.write_dataframe(self.chart, "../feather/{}.feather".format(name))
 
     @benchmark
     def _chart_parser(self):
@@ -75,7 +79,7 @@ class main:
         ss = StressSim(self.smd)
     
         # Run the Simulation and assign new dataframe to chart.stress
-        self.chart_stress = ss.simulate(self.chart, 1000)
+        self.chart_stress = ss.simulate(self.chart, self.interval)
         
     @benchmark
     def _stress_plot(self):
@@ -94,5 +98,7 @@ class main:
         self._stress_sim()
         self._stress_plot()
         
-c = main("../osu/Camellia VS. lapix - Hypnotize (Evening) [bool worldwpdrive(const Entity &user);].osu")
-c.run()
+
+sim = Simulator("../osu/Camellia VS. lapix - Hypnotize (Evening) [bool worldwpdrive(const Entity &user);].osu")
+sim.run()
+sim.export_self("hypnotize")
