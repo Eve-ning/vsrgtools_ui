@@ -15,43 +15,72 @@ osu.hypnotize <- "../osu/Camellia VS. lapix - Hypnotize (Evening) [bool worldwpd
 osu.stargazer <- "../osu/stargazer - dreamer (Evening) [wander].osu"
 osu.maniera <- "../osu/D(ABE3) - MANIERA (iJinjin) [Masterpiece].osu"
 
-# Read the map into a DataFrame
-chart <- ChartParser(osu.maniera)
-chart <- chart$parse_auto()
-
-# Create StressMapping with a DataFrame
-sm_df = data.frame(types = c('note','lnoteh','lnotet'),
-                   adds = c(50, 50, 50),
-                   mults = c(1, 1, 1))
-
-smp = StressMapper(sm_df)
-
-# Map over to the chart
-chart = smp$map_over(chart)
-
-# Specify Decay and Spike Functions
-decay <- function(stress, duration) {
-  return(stress / (2 ** (duration / 1000)))
+simulate_chart <- function(chart.path) {
+  
+  f.chart.parser <- function(){
+    # Read the map into a DataFrame
+    chart <<- ChartParser(chart.path)
+    chart <<- chart$parse_auto()
+  }
+  
+  f.stress.mapper <- function(){
+    # Create StressMapping with a DataFrame
+    sm_df <<- data.frame(types = c('note','lnoteh','lnotet'),
+                       adds = c(50, 50, 50),
+                       mults = c(1, 1, 1))
+    
+    smp <<- StressMapper(sm_df)
+    
+    # Map over to the chart
+    chart <<- smp$map_over(chart)
+  }
+  
+  f.stress.model <- function(){
+    # Specify Decay and Spike Functions
+    decay <<- function(stress, duration) {
+      return(stress / (2 ** (duration / 1000)))
+    }
+    
+    spike <<- function(stress, adds, mults) {
+      return (stress + adds) * mults
+    }
+    
+    # Create StressModel
+    smd <<- StressModel(decay_func = decay,
+                      spike_func = spike,
+                      stress = 0.0)
+  }
+  
+  f.stress.sim <- function(){
+    # Integrate into Stress Simulator
+    ss <<- StressSim(smd)
+    
+    # Run the Simulation and assign new dataframe to chart.stress
+    chart.stress <<- ss$simulate(chart)
+  }
+  
+  f.stress.plot <- function() {
+    # Plot out chart
+    ggplot(chart.stress) +
+      aes(x = offsets,
+          y = stress) +
+      geom_smooth(aes(group = columns, color = factor(columns)),
+                  se = F)
+  }
+  
+  f.benchmark <- function(f, n) {
+    start.time <- Sys.time()
+    f()
+    end.time <- Sys.time()
+    time.taken <- end.time - start.time
+    print(cat(n, time.taken, sep ='\t'))
+  }
+  
+  f.benchmark(f.chart.parser, "Chart Parser")
+  f.benchmark(f.stress.mapper, "Stress Mapper")
+  f.benchmark(f.stress.model, "Stress Model")
+  f.benchmark(f.stress.sim, "Stress Sim")
+  f.benchmark(f.stress.plot, "Stress Plot")
 }
 
-spike <- function(stress, adds, mults) {
-  return (stress + adds) * mults
-}
-
-# Create StressModel
-smd = StressModel(decay_func = decay,
-                  spike_func = spike,
-                  stress = 0.0)
-
-# Integrate into Stress Simulator
-ss = StressSim(smd)
-
-# Run the Simulation and assign new dataframe to chart.stress
-chart.stress = ss$simulate(chart)
-
-# Plot out chart
-ggplot(chart) +
-  aes(x = offsets,
-      y = stress) +
-  geom_smooth(aes(group = columns, color = factor(columns)),
-              se = F)
+simulate_chart(osu.hypnotize)
