@@ -11,10 +11,6 @@ source_python("stress_mapper.py")
 source_python("stress_sim.py")
 source_python("stress_model.py")
 
-osu.hypnotize <- "../osu/Camellia VS. lapix - Hypnotize (Evening) [bool worldwpdrive(const Entity &user);].osu"
-osu.stargazer <- "../osu/stargazer - dreamer (Evening) [wander].osu"
-osu.maniera <- "../osu/D(ABE3) - MANIERA (iJinjin) [Masterpiece].osu"
-
 simulate_chart <- function(chart.path) {
   
   f.chart.parser <- function(){
@@ -56,7 +52,7 @@ simulate_chart <- function(chart.path) {
     ss <<- StressSim(smd)
     
     # Run the Simulation and assign new dataframe to chart.stress
-    chart.stress <<- ss$simulate(chart)
+    chart.stress <<- ss$simulate(chart, 1000)
   }
   
   f.stress.plot <- function() {
@@ -82,5 +78,9 @@ simulate_chart <- function(chart.path) {
   f.benchmark(f.stress.sim, "Stress Sim")
   f.benchmark(f.stress.plot, "Stress Plot")
 }
+
+osu.hypnotize <- "../osu/Camellia VS. lapix - Hypnotize (Evening) [bool worldwpdrive(const Entity &user);].osu"
+osu.stargazer <- "../osu/stargazer - dreamer (Evening) [wander].osu"
+osu.maniera <- "../osu/D(ABE3) - MANIERA (iJinjin) [Masterpiece].osu"
 
 simulate_chart(osu.hypnotize)
