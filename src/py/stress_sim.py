@@ -78,7 +78,8 @@ class StressSim:
         
         smd_ = copy.deepcopy(self.smd) 
         prev_offset = 0
-        simdf = pd.DataFrame(columns=['offsets', 'stress'])
+        
+        stress_l= []
         
         # For each row, we will:
         # Append rows to simdf by specified interval if no notes are hit
@@ -93,10 +94,8 @@ class StressSim:
             ## Decay first
             smd_.decay(r.offsets - prev_offset,
                        apply=True)
-            simdf = simdf.append({
-                    'offsets': r.offsets,
-                    'stress': smd_.stress
-                    }, ignore_index = True)
+            
+            stress_l.append((r.offsets, smd_.stress))
     
             ## Spike next
             ### This extracts columns from r that match spike_columns
@@ -104,14 +103,14 @@ class StressSim:
             
             smd_.spike(**rdict, # Unpack r dictionary
                        apply=True)
-            simdf = simdf.append({
-                    'offsets': r.offsets,
-                    'stress': smd_.stress
-                    }, ignore_index = True)
+            stress_l.append((r.offsets, smd_.stress))
             
             # Update prev_offset with current one
             prev_offset = r.offsets
         
+        # end for
+        
+        simdf = pd.DataFrame(stress_l, columns=['offsets', 'stress'])
         # Add column to indicate column number
         simdf['columns'] = column
         return simdf
