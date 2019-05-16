@@ -162,6 +162,7 @@ ggplot(chart.stress) +
   geom_smooth(aes(group = columns, color = factor(columns)),
               se = F)
 ```
+
 ## Stress Transfer
 ### Stress Hand
 #### Transfer Function
