@@ -81,22 +81,11 @@ class Simulator:
         # Run the Simulation and assign new dataframe to chart.stress
         self.chart_stress = ss.simulate(self.chart, self.interval)
         
-    @benchmark
-    def _stress_plot(self):
-        pass
-    # Plot out chart
-#    ggplot(chart.stress) +
-#      aes(x = offsets,
-#          y = stress) +
-#      geom_smooth(aes(group = columns, color = factor(columns)),
-#                  se = F)
-    
     def run(self):
         self._chart_parser()
         self._stress_mapper()
         self._stress_model()
         self._stress_sim()
-        self._stress_plot()
         
 
 sim = Simulator("../osu/Camellia VS. lapix - Hypnotize (Evening) [bool worldwpdrive(const Entity &user);].osu")
