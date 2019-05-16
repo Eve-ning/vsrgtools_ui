@@ -94,10 +94,10 @@ class StressSim:
                 smd_.decay(_offset - prev_offset, apply=False)
                 
             ## Decay first
-            smd_.decay(r.offsets - prev_offset,
+            smd_.decay(r.offsets - 1 - prev_offset,
                        apply=True)
             
-            stress_l.append((r.offsets, smd_.stress, column))
+            stress_l.append((r.offsets - 1, smd_.stress, column))
     
             ## Spike next
             ### This extracts columns from r that match spike_columns
