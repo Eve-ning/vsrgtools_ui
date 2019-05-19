@@ -36,10 +36,11 @@ class Simulator:
         self.lnotet_mult = 1
         self.decay_a = 2
         self.decay_b = 1000
-        self.interval = 1000
     
+    @benchmark
     def export_self(self, name):
-        feather.write_dataframe(self.chart, "../feather/{}.feather".format(name))
+        feather.write_dataframe(self.chart, "../feather/map/{}.feather".format(name))
+        feather.write_dataframe(self.chart_stress, "../feather/map/{}_stress.feather".format(name))
 
     @benchmark
     def _chart_parser(self):
@@ -79,8 +80,9 @@ class Simulator:
         ss = StressSim(self.smd)
     
         # Run the Simulation and assign new dataframe to chart.stress
-        self.chart_stress = ss.simulate(self.chart, self.interval)
-        
+        self.chart_stress = ss.simulate(self.chart)
+    
+    @benchmark
     def run(self):
         self._chart_parser()
         self._stress_mapper()
@@ -88,6 +90,6 @@ class Simulator:
         self._stress_sim()
         
 
-sim = Simulator("../osu/Camellia VS. lapix - Hypnotize (Evening) [bool worldwpdrive(const Entity &user);].osu")
+sim = Simulator("../osu/D(ABE3) - MANIERA (iJinjin) [Masterpiece].osu")
 sim.run()
-sim.export_self("hypnotize")
+sim.export_self("maniera")
