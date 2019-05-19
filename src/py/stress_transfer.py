@@ -36,6 +36,21 @@ Stress Transfer (ST) is dependent on these things:
         
         However, they are both arguably easy on an IIDX controller
 
-
-
 '''
+
+import pandas as pd
+
+class StressTransfer:
+    def __init__(self, df_stress):
+        self.df = df_stress
+        pass
+    
+    def _hand(self):
+        pd
+        pass
+    
+    def _body(self):
+        pass
+    
+    def _pattern(self):
+        pass
