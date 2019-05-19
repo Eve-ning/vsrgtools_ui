@@ -7,26 +7,33 @@ library(reshape2)
 library(zoo)
 library(dplyr)
 library(magrittr)
+library(plas)
 
 'source("src/r/stress_transfer.R")'
 
 feather.map.path <- "src/feather/map/"
 feather.replay.path <- "src/feather/replay/"
 
+map_name <- "tokio_funka"
+
 df.map <- read_feather(paste(feather.map.path,
-                             "maniera.feather",
+                             map_name,
+                             ".feather",
                              sep = ""))
+df.map.stress <- read_feather(paste(feather.map.path,
+                                    map_name,
+                                    "_stress.feather",
+                                    sep = ""))
 df.replay <- read_feather(paste(feather.replay.path,
-                                "manieraJupiter.feather",
+                                "3840946_tokio_funka.feather",
                                 sep = ""))
 
-df.map$actions <- df.map$columns
+df.map$actions <- df.map$columns + 1
 df.map$actions[df.map$types == 'lnotet'] %<>%
  multiply_by(-1)
 
-actions.unq <- unique(df.map$actions)
-
 f.similarity.match <- function(df.map, df.replay){
+  actions.unq <- unique(df.map$actions)
   
   df.joined <- data.frame(matrix(ncol=8, nrow=0))
   for (ac in actions.unq) {
@@ -39,7 +46,7 @@ f.similarity.match <- function(df.map, df.replay){
       # We will get the minimum (which is the closest match)
       # Then we throw it into df.joined
       df.replay.match <- df.replay.ac[which.min(abs(df.replay.ac$offsets -
-                                                    df.map.ac$offsets[ac.m])),]
+                                                    df.map.ac$offsets[ac.m]))[1],]
       colnames(df.replay.match) <- paste("r",
                                          colnames(df.replay.match),
                                          sep='.')
@@ -50,14 +57,30 @@ f.similarity.match <- function(df.map, df.replay){
   
   return(df.joined)
 }
-group_by(df.replay, by=action)
 
-df.mapc <- dcast(df.map, offsets ~ columns, value.var = "stress")
-df.mapc <- as.data.frame(na.approx(df_mapc))
+df.match <- f.similarity.match(df.map = df.map,
+                               df.replay = df.replay)
 
-df.replayc <- dcast(df.replay, offsets ~ columns, value.var = "stress")
+df.match$dev <- df.match$r.offsets - df.match$offsets
 
-ggplot(df_mapc) +
-  aes(x = offsets, y = `1`) +
-  geom_smooth(se = F)
+df.temp <- aggregate(dev ~ offsets, data = df.match, mean)
+
+df.mapc <- dcast(df.map.stress, offsets ~ columns, value.var = "stress")
+df.mapc <- as.data.frame(na.approx(df.mapc))
+df.mapc[is.na(df.mapc)] <- 0
+df.mapc$stress <- rowMeans(df.mapc[,2:ncol(df.mapc)])
+# This takes into account the generated stress, we need to remove that as well
+
+normalize <- function(x){(x-min(x))/(max(x)-min(x))}
+zero <- function(x){x - mean(x)}
+df.mapc$stress.zero <- df.mapc$stress %>% zero()
+df.temp$stress.norm <- df.temp$dev %>% normalize()
+
+ggplot(df.mapc) +
+  aes(x = offsets, y = stress) +
+  geom_smooth(legend = "test") +
+  geom_point(data = df.temp,
+              aes(x = offsets, y = dev),
+              color='red')
+
 
