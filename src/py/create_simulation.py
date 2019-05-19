@@ -89,7 +89,3 @@ class Simulator:
         self._stress_model()
         self._stress_sim()
         
-
-sim = Simulator("../osu/D(ABE3) - MANIERA (iJinjin) [Masterpiece].osu")
-sim.run()
-sim.export_self("maniera")
