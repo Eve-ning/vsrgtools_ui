@@ -26,7 +26,7 @@ class ChartParser:
     
     def parse_osu(self):
         '''Parses osu file formats'''
-        f = open(self.chart_path, 'r')
+        f = open(self.chart_path, 'r', errors='replace')
         fr = f.readlines()
         f.close()
         
