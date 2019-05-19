@@ -26,7 +26,6 @@ class StressSim:
         
     def simulate(self,
                  df: pd.DataFrame,
-                 interval = 1000,
                  spike_columns = None,
                  offsets_column = "offsets") -> pd.DataFrame:
         '''Simulates the StressModel and appends results to the df
@@ -56,7 +55,7 @@ class StressSim:
         
         stress_l = []
         for i, g in dfg:
-            stress_l.append(self._simulate_group(g, interval, i, spike_columns))
+            stress_l.append(self._simulate_group(g, i, spike_columns))
             
         stress_l = list(itertools.chain.from_iterable(stress_l))
         
@@ -67,7 +66,6 @@ class StressSim:
     
     def _simulate_group(self,
                         group: pd.DataFrame,
-                        interval,
                         column,
                         spike_columns):
         '''Simulates for a particular group
@@ -87,11 +85,6 @@ class StressSim:
         # Append rows to simdf by specified interval if no notes are hit
         # Append rows before and after the spike
         for r in group.itertuples():
-            # Increase offsets by interval until next note is in range
-            _offset = prev_offset # This _offset is only used in interval
-            while (_offset + interval < r.offsets):
-                _offset += interval
-                smd_.decay(_offset - prev_offset, apply=False)
                 
             ## Decay first
             smd_.decay(r.offsets - 1 - prev_offset,
