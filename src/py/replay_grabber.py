@@ -10,12 +10,19 @@ import pandas as pd, feather
 
 api = osu_api.OsuAPI()
 
+beatmap_id = 646681
+user = 7919724
+
 # Maniera - Jupiter -
-rep, status_code = api.get_replay(beatmap_id=646681,
-                                  mode=3,
-                                  user=7919724)
+def get_replay():
+    rep, status_code = api.get_replay(beatmap_id=beatmap_id,
+                                      mode=3,
+                                      user=user)
+    
+    if (status_code != 200):
+        raise Exception("Status: {}".format(status_code))
+    
+    return rep
 
-print(status_code)
-
-df = pd.DataFrame(rep, columns=('offset', 'action'))
+df = pd.DataFrame(get_replay(), columns=('offsets', 'actions'))
 feather.write_dataframe(df, '../feather/replay/manieraJupiter.feather')
