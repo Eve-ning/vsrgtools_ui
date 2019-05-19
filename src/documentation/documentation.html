@@ -457,8 +457,32 @@ $(document).ready(function () {
 </div>
 <div id="input" class="section level1">
 <h1>Input</h1>
+<p><em>Notice: all the following code are pseudocode, they are not actually ran</em></p>
 <p>The input would be 2 different datasets.</p>
-<p><strong>Map</strong> <code>type, column, offset</code></p>
+<p><strong>Map</strong> <code>type, column, offset</code> <strong>Player Replay</strong> <code>column, offset, deviation</code></p>
+<p>Note that there are no uniquely identifying columns in both of these datasets.</p>
+<div id="grouping-datasets" class="section level2">
+<h2>Grouping Datasets</h2>
+<p>We will create a working unique index for both of these through offset.</p>
+<pre><code>map.groupby(by=offset)
+replay.groupby(by=offset)</code></pre>
+<p>It should look something like this</p>
+<pre><code>Map
+Column | Type    | Offset
+-------+---------+--------
+[1,2,3]|[N,N,LNH]|   1
+           ...
+
+Replay
+Column |   Dev   | Offset
+-------+---------+--------
+[1,2,3]|[4,3,-1] |   1
+           ...</code></pre>
+<div id="offset-grouping-for-players" class="section level3">
+<h3>Offset Grouping for Players</h3>
+<p>There may be queries on why offsets should be grouped. The main reason for grouping lies later in the document, where <strong>Grace Periods</strong> and <strong>Column Categorization</strong> occurs.</p>
+</div>
+</div>
 </div>
 
 

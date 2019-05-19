@@ -66,9 +66,45 @@ We need to understand that **Player skill** is totally independent of **Map diff
 
 # Input
 
+*Notice: all the following code are pseudocode, they are not actually ran*
+
 The input would be 2 different datasets.
 
 **Map** `type, column, offset`
+**Player Replay** `column, offset, deviation`
+
+Note that there are no uniquely identifying columns in both of these datasets.
+
+## Grouping Datasets
+
+We will create a working unique index for both of these through offset.
+
+```
+map.groupby(by=offset)
+replay.groupby(by=offset)
+```
+It should look something like this
+```
+Map
+Column | Type    | Offset
+-------+---------+--------
+[1,2,3]|[N,N,LNH]|   1
+           ...
+
+Replay
+Column |   Dev   | Offset
+-------+---------+--------
+[1,2,3]|[4,3,-1] |   1
+           ...
+```
+
+### Offset Grouping for Players
+
+There may be queries on why offsets should be grouped. The main reason for grouping lies later in the document, where **Grace Periods** and **Column Categorization** occurs.
+
+
+
+
 
 
 
