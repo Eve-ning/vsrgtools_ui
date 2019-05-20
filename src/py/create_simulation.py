@@ -25,17 +25,43 @@ def benchmark(f):
     
 class Simulator:
     
-    def __init__(self, chart_path):
+    
+    def __init__(self,
+                 chart_path,
+                 sm_df = None,
+                 spike_func = None,
+                 decay_func = None):
+        
         self.chart_path = chart_path
+        
+        if (not spike_func):
+            self.spike_func =\
+                lambda stress, adds, mults: (stress + adds) * mults
+        else: self.spike_func = spike_func       
+            
+        if (not decay_func):
+            self.decay_func =\
+                lambda stress, duration: stress / (2 ** (duration / 1000))
+        else: self.decay_func = decay_func
+        
         self.chart = None
+        
+        if (not sm_df):
+            pd.DataFrame([['note'],['lnoteh'],['lnotet']], columns = ['types'])
+        else: self.sm_df = sm_df
+        
+    def _load_default_stress_mapper(self):
+        '''Loads a Default Mapping Dataframe for Stress Mapper'''
         self.note_add = 50
         self.note_mult = 1
         self.lnoteh_add = 50
         self.lnoteh_mult = 1
         self.lnotet_add = 50
         self.lnotet_mult = 1
-        self.decay_a = 2
-        self.decay_b = 1000
+        self.sm_df = pd.DataFrame([['note', self.note_add, self.note_mult],
+                                  ['lnoteh', self.lnoteh_add, self.lnoteh_mult],
+                                  ['lnotet', self.lnotet_add, self.lnotet_mult]],
+                                 columns = ['types', 'adds', 'mults'])
     
     @benchmark
     def export_self(self, name):
@@ -51,23 +77,28 @@ class Simulator:
     @benchmark
     def _stress_mapper(self):
         # Create StressMapping with a DataFrame
-        sm_df = pd.DataFrame([['note', self.note_add, self.note_mult],
-                              ['lnoteh', self.lnoteh_add, self.lnoteh_mult],
-                              ['lnotet', self.lnotet_add, self.lnotet_mult]],
-                             columns = ['types', 'adds', 'mults'])
+        if (self.sm_df == None): # Means it's not defined
+            self._load_default_stress_mapper()
         
-        smp = StressMapper(sm_df)
+        smp = StressMapper(self.sm_df)
         
         # Map over to the chart
         self.chart = smp.map_over(self.chart)
 
     @benchmark
     def _stress_model(self):
-        # Specify Decay and Spike Functions
-        def decay(stress, duration):
-            return(stress / (self.decay_a ** (duration / self.decay_b)))
-        def spike(stress, adds, mults):
-            return (stress + adds) * mults
+        # Specify Decay and Spike Functions, default if None
+        if (not self.decay_func):
+            def decay(stress, duration):
+                return stress / (2 ** (duration / 1000))
+        else:
+            decay = self.decay_func
+        
+        if (not self.spike_func):
+            def spike(stress, adds, mults):
+                return (stress + adds) * mults
+        else:
+            spike = self.spike_func
     
         # Create StressModel
         self.smd = StressModel(decay_func = decay,
