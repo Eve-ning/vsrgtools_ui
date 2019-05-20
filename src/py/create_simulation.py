@@ -108,7 +108,7 @@ class Simulator:
                             columns = ['types'])
         else: self.sm_df = sm_df
     
-        self.chart = None
+        self.chart = pd.DataFrame()
         
     def _load_default_stress_mapper(self):
         '''Loads a Default Mapping Dataframe for Stress Mapper'''
@@ -125,8 +125,12 @@ class Simulator:
     
     @benchmark
     def export_self(self, name):
-        feather.write_dataframe(self.chart, "../feather/map/{}.feather".format(name))
-        feather.write_dataframe(self.chart_stress, "../feather/map/{}_stress.feather".format(name))
+        if (self.chart.empty):
+            raise Exception("No Chart detected, use the 'run()' function first")
+        feather.write_dataframe(self.chart,
+                                "../feather/map/{}.feather".format(name))
+        feather.write_dataframe(self.chart_stress,
+                                "../feather/map/{}_stress.feather".format(name))
 
     @benchmark
     def _chart_parser(self):
@@ -137,7 +141,7 @@ class Simulator:
     @benchmark
     def _stress_mapper(self):
         # Create StressMapping with a DataFrame
-        if (self.sm_df == None): # Means it's not defined
+        if (self.sm_df.empty): # Means it's not defined
             self._load_default_stress_mapper()
         
         smp = StressMapper(self.sm_df)
