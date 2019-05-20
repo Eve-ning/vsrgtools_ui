@@ -7,7 +7,6 @@ Created on Sun May 19 23:14:19 2019
 
 from osu_api import OsuAPI
 from osu_downloader import OsuDownloader
-from create_simulation import Simulator
 import pandas as pd
 import feather
 
@@ -19,10 +18,8 @@ class Interface:
         self.save_dir = '../'
         self.save_osu_dir = self.save_dir + 'osu/' + self.file_name + '.osu'
 
-        
         self.api = OsuAPI()
         self.down = OsuDownloader()
-        self.sim = Simulator(self.save_osu_dir)
         
     def grab_replay(self, user_id):
         data, _ = self.api.get_replay(self.beatmap_id,
@@ -43,10 +40,6 @@ class Interface:
             f.write(data.encode("UTF-8"))
             
         self._simulate_beatmap()
-        
-    def _simulate_beatmap(self):
-        self.sim.run()
-        self.sim.export_self(self.file_name)
         
 def user_interface():
     print("osu! Api and .osu downloader interface")
