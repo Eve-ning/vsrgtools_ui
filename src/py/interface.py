@@ -7,6 +7,7 @@ Created on Sun May 19 23:14:19 2019
 
 from osu_api import OsuAPI
 from osu_downloader import OsuDownloader
+import os
 import pandas as pd
 import feather
 
@@ -35,11 +36,16 @@ class Interface:
                                 self.file_name + '.feather')
         
     def grab_beatmap(self):
+        '''Grabs Beatmap and saves it
+        
+        Skips if beatmap already exists'''
+        save_dir = self.save_dir + 'osu/' + self.file_name + '.osu'
+        if (os.path.isfile(save_dir)):
+            return
+        
         data = self.down.osu_diff_get(self.beatmap_id)
-        with open(self.save_dir + 'osu/' + self.file_name + '.osu', 'wb+') as f:
+        with open(save_dir, 'wb+') as f:
             f.write(data.encode("UTF-8"))
-            
-        self._simulate_beatmap()
         
 def user_interface():
     print("osu! Api and .osu downloader interface")
@@ -53,7 +59,6 @@ def user_interface():
                 return
             
             it = Interface(beatmap_id, file_name)
-            
             it.grab_beatmap()
             
             print("Beatmap Grabbed as {}".format("file_name"))
@@ -66,7 +71,6 @@ def user_interface():
                 
                 if (user_id == ""):
                     break
-    
 
     except:
         print("Quitting.")
