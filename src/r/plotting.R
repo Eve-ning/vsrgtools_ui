@@ -10,8 +10,7 @@ library(magrittr)
 
 'source("src/r/stress_transfer.R")'
 
-map_name <- "tokio_funka"
-
+# Define all functions here
 f.load.feathers <- function(map.name, user.id){
   feather.map.path <- "src/feather/map/"
   feather.replay.path <- "src/feather/replay/"
@@ -55,37 +54,83 @@ f.similarity.match <- function(df.map, df.replay){
   
   return(df.joined)
 }
+f.project.values <- function(df.map.str){
+  df.mapc <- dcast(df.map.stress, offsets ~ columns, value.var = "stress")
+  df.mapc <- as.data.frame(na.approx(df.mapc))
+  df.mapc[is.na(df.mapc)] <- 0
+  df.map.str <- melt(df.mapc,
+                     id.vars = 1,
+                     value.name = "stress",
+                     variable.name = "columns")
+  return(df.map.str)
+}
 
-# This creates the action column for map
-df.map$actions <- df.map$columns + 1
-df.map$actions[df.map$types == 'lnotet'] %<>%
- multiply_by(-1)
+f.load.feathers("tldne",
+                3155787)
+{ # This chunk deals with simulated stress
+  df.map.stress <- f.project.values(df.map.stress)
+  df.map.stress <- 
+    group_by(df.map.stress, offsets) %>% 
+    summarise(
+      stress.85 = quantile(stress, probs = 0.85),
+      stress.50 = quantile(stress, probs = 0.50),
+      stress.15 = quantile(stress, probs = 0.15)
+    ) %>% 
+    melt(id.vars = 1,
+         value.name = "stress",
+         variable.name = "quantiles")
+}
+{ # This chunk deals with replay stress/dev
+  # This creates the action column for map
+  df.map$actions <- df.map$columns + 1
+  df.map$actions[df.map$types == 'lnotet'] %<>%
+   multiply_by(-1)
+  
+  # Does a similarity match between 2 DataFrames
+  df.match <- f.similarity.match(df.map = df.map,
+                                 df.replay = df.replay)
+  
+  # Calculate deviation
+  df.match$dev <- df.match$r.offsets - df.match$offsets
+  
+  df.match$bin.s <- ceiling(df.match$offsets / 1000) * 1000
+  df.match$dev <- abs(df.match$dev)
+  df.match <- df.match %>%  
+    group_by(bin.s) %>% 
+    summarise(
+      dev.85 = quantile(dev, probs = 0.85),
+      dev.50 = quantile(dev, probs = 0.50),
+      dev.15 = quantile(dev, probs = 0.15)
+    ) %>% 
+    melt(id.vars = 1,
+         value.name = "dev",
+         variable.name = "quantiles")
+ 
+}
 
-# Does a similarity match between 2 DataFrames
-df.match <- f.similarity.match(df.map = df.map,
-                               df.replay = df.replay)
+colnames(df.match) <- c("offsets", "quantiles", "stress")
+df.match$stress <- df.match$stress * 25
+df.temp <- rbind(df.map.stress, df.match)
 
-# Calculate deviation
-df.match$dev <- df.match$r.offsets - df.match$offsets
-
-df.temp <- aggregate(dev ~ offsets, data = df.match, mean)
-
-df.mapc <- dcast(df.map.stress, offsets ~ columns, value.var = "stress")
-df.mapc <- as.data.frame(na.approx(df.mapc))
-df.mapc[is.na(df.mapc)] <- 0
-df.mapc$stress <- rowMeans(df.mapc[,2:ncol(df.mapc)])
-# This takes into account the generated stress, we need to remove that as well
-
-normalize <- function(x){(x-min(x))/(max(x)-min(x))}
-zero <- function(x){x - mean(x)}
-df.mapc$stress.zero <- df.mapc$stress %>% zero()
-df.temp$stress.norm <- df.temp$dev %>% normalize()
-
-ggplot(df.mapc) +
+ggplot(df.map.stress) +
   aes(x = offsets, y = stress) +
-  geom_smooth(legend = "test") +
-  geom_point(data = df.temp,
-              aes(x = offsets, y = dev),
-              color='red')
+  geom_smooth(aes(group=quantiles,
+                  color=quantiles),se=F) +
+  ggtitle(label = "Cardboard Box - The Limit Does Not Exist (Infinity)",
+          subtitle = "Simulated Stress by Virtual Player") +
+  xlab("offset") +
+  ylab("stress")
+
+  
+ggplot(df.match) +
+  aes(x = bin.s, y = dev) +
+  geom_smooth(span=0.3,
+              aes(group=quantiles,
+                  color=quantiles), se=F,
+              linetype='longdash') +
+  ggtitle(label = "Cardboard Box - The Limit Does Not Exist (Infinity)",
+          subtitle = "Play by MoTeSolo") +
+  xlab("offset") +
+  ylab("|dev|")
 
 
