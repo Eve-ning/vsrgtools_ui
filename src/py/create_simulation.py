@@ -71,7 +71,8 @@ class Simulator:
     Decay Function Requirements:
         Similar to Spike Function, but this occurs whenever there's nothing
         happening.
-        'stress' and 'duration' are required arguments
+        'stress' and 'duration' are required arguments. Note that 'duration'
+        is in ms.
         
         E.g.
         
