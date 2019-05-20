@@ -17,13 +17,20 @@ def spike(stress, adds, mults):
 def decay(stress, duration):
     return stress / pow(2, (duration / 1000))
 
-sim = Simulator("../osu/D(ABE3) - MANIERA (iJinjin) [Masterpiece].osu")
+sim = Simulator("../osu/tldne.osu",
+                spike_func=spike,
+                decay_func=decay)
 
 # Grab the template DF
 sm_df = sim.sm_df
-sm_df['adds'] = (1,2,3)
+#                 NOTE LNOTEH LNOTEL
+sm_df['adds']  = (50,  35,    35)
+sm_df['mults'] = (1.1, 1.05,  1.05)
 
-print(sm_df)
+sim.sm_df = sm_df
+
+sim.run()
+sim.export_self("tldne")
 
 
 
