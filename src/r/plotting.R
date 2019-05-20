@@ -7,31 +7,29 @@ library(reshape2)
 library(zoo)
 library(dplyr)
 library(magrittr)
-library(plas)
 
 'source("src/r/stress_transfer.R")'
 
-feather.map.path <- "src/feather/map/"
-feather.replay.path <- "src/feather/replay/"
-
 map_name <- "tokio_funka"
 
-df.map <- read_feather(paste(feather.map.path,
-                             map_name,
-                             ".feather",
-                             sep = ""))
-df.map.stress <- read_feather(paste(feather.map.path,
-                                    map_name,
-                                    "_stress.feather",
-                                    sep = ""))
-df.replay <- read_feather(paste(feather.replay.path,
-                                "3840946_tokio_funka.feather",
-                                sep = ""))
-
-df.map$actions <- df.map$columns + 1
-df.map$actions[df.map$types == 'lnotet'] %<>%
- multiply_by(-1)
-
+f.load.feathers <- function(map.name, user.id){
+  feather.map.path <- "src/feather/map/"
+  feather.replay.path <- "src/feather/replay/"
+  df.map <<- read_feather(paste(feather.map.path,
+                               map.name,
+                               ".feather",
+                               sep = ""))
+  df.map.stress <<- read_feather(paste(feather.map.path,
+                                      map.name,
+                                      "_stress.feather",
+                                      sep = ""))
+  df.replay <<- read_feather(paste(feather.replay.path,
+                                  user.id,
+                                  "_",
+                                  map.name,
+                                  ".feather",
+                                  sep = ""))
+}
 f.similarity.match <- function(df.map, df.replay){
   actions.unq <- unique(df.map$actions)
   
@@ -46,7 +44,7 @@ f.similarity.match <- function(df.map, df.replay){
       # We will get the minimum (which is the closest match)
       # Then we throw it into df.joined
       df.replay.match <- df.replay.ac[which.min(abs(df.replay.ac$offsets -
-                                                    df.map.ac$offsets[ac.m]))[1],]
+                                                      df.map.ac$offsets[ac.m]))[1],]
       colnames(df.replay.match) <- paste("r",
                                          colnames(df.replay.match),
                                          sep='.')
@@ -58,9 +56,16 @@ f.similarity.match <- function(df.map, df.replay){
   return(df.joined)
 }
 
+# This creates the action column for map
+df.map$actions <- df.map$columns + 1
+df.map$actions[df.map$types == 'lnotet'] %<>%
+ multiply_by(-1)
+
+# Does a similarity match between 2 DataFrames
 df.match <- f.similarity.match(df.map = df.map,
                                df.replay = df.replay)
 
+# Calculate deviation
 df.match$dev <- df.match$r.offsets - df.match$offsets
 
 df.temp <- aggregate(dev ~ offsets, data = df.match, mean)
