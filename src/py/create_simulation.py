@@ -101,12 +101,14 @@ class Simulator:
             self.decay_func =\
                 lambda stress, duration: stress / (2 ** (duration / 1000))
         else: self.decay_func = decay_func
-        
-        self.chart = None
-        
+
         if (not sm_df):
-            pd.DataFrame([['note'],['lnoteh'],['lnotet']], columns = ['types'])
+           self.sm_df =\
+               pd.DataFrame([['note'],['lnoteh'],['lnotet']],
+                            columns = ['types'])
         else: self.sm_df = sm_df
+    
+        self.chart = None
         
     def _load_default_stress_mapper(self):
         '''Loads a Default Mapping Dataframe for Stress Mapper'''
