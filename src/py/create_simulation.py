@@ -24,7 +24,64 @@ def benchmark(f):
     return wrapper
     
 class Simulator:
+    '''Creates a Simulation Wrapper Class
     
+    This class contains all the functions required to start the simulation
+    
+    Args:
+        chart_path: Specify chart path to be simulated
+        sm_df: Stress Mapping DataFrame, this is optional. Details below
+        spike_func: Spike Function for the Stress Model. Details below
+        decay_func: Decay Function for the Stress Model. Details below
+        
+    Stress Mapping DataFrame Requirements:
+        If None is specified, a template self.sm_df is generated automatically.
+        Before 'run()'-ing, grab that variable and modify it.
+        
+        The DataFrame must still contain the column for types. For other
+        columns, it must exactly match requirements for your spike function.
+        
+        E.g.
+        
+        types | <kwarg name 1> | <kwarg name 2>
+        ------+----------------+---------------
+        note    <kwarg val A1>   <kwarg val A2>
+        lnoteh  <kwarg val B1>   <kwarg val B2>
+        lnotet  <kwarg val C1>   <kwarg val C2>
+        
+        Read Spike Function Requirements for kwarg details
+        
+    Spike Function Requirements:
+        This is where you should specify how the value would change.
+        'stress' as an argument is required.
+        
+        E.g.
+        
+        def spike_func(stress, adds, mults):
+            (stress + adds) * mults
+            
+        (Refer to Stress Mapping DataFrame Requirements)
+        During a Note:
+            
+        stress = (stress + <kwarg val A1>) * <kwarg val A2>
+        
+        To reiterate, kwargs used in the function must match ones used in the
+        Stress Mapping DataFrame.
+        
+    Decay Function Requirements:
+        Similar to Spike Function, but this occurs whenever there's nothing
+        happening.
+        'stress' and 'duration' are required arguments
+        
+        E.g.
+        
+        def decay_func(stress, duration):
+            return stress / (2 ** (duration / 1000))
+        
+        Decay is entirely dependent on duration only.
+        
+        stress = stress / (2 ** (duration / 1000))
+    '''
     
     def __init__(self,
                  chart_path,
