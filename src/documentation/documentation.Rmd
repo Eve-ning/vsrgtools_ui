@@ -64,6 +64,31 @@ We need to understand that **Player skill** is totally independent of **Map diff
 
 **Map difficulty should not be dynamically calculated from player performance**
 
+# Layout
+
+## Resource Downloading
+This will be done in Python, no exceptions
+
+## Parsing
+This can be done in R or Python, I'm leaning more towards R since it'll make the workflow easier to handle in one IDE
+
+## Simulating
+This can be done in R or Python, similarly, I'm leaning towards R due to performance issues when it comes to `reticulate`
+
+## Detailing
+This should be done in R due to simulated DataFrames being easier to work in R than PyPandas.
+
+## Plotting
+Using R through ggplot2
+
+## Analysing correlations
+Using RShiny, we should implement a UI that we can tweak to form a good simulation.
+
+## Machine Learning
+Depends on if we want to use this, we can somehow integrate machine learning in here to polish the results, rather than eyeballing it.
+
+**
+
 # Input
 
 *Notice: all the following code are pseudocode, they are not actually ran*
@@ -102,6 +127,13 @@ Column |   Dev   | Offset
 
 There may be queries on why offsets should be grouped. The main reason for grouping lies later in the document, where **Grace Periods** and **Column Categorization** occurs.
 
+## Identifying the model
+
+Next, we establish what the model should perform and what variables can we provide it with.
+
+Essentially, the model should be:
+
+$$f(column, type) = dev$$
 
 
 
