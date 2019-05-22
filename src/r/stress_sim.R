@@ -47,23 +47,6 @@ f.stress.sim <- function(chart,
   require(magrittr)
   require(dplyr)
   
-  # Some test data
-  # chart <- data.frame(keys = c(1,2,3,4),
-  #                     types = c('note', 'lnoteh', 'lnotel', 'note'),
-  #                     offsets = c(10,20,30,40))
-  # 
-  # df.mapping <- data.frame(types = c('note', 'lnoteh', 'lnotel'),
-  #                          adds = c(50,50,25),
-  #                          mults = c(1.1, 1.1, 1.03))
-  # 
-  # 
-  # f.spike <- function(stress, args){
-  #   return((stress + args$adds) * args$mults)
-  # }
-  # f.decay <- function(stress, duration){
-  #   return(stress / (2 ** duration))
-  # }
-  
   # Firstly, we join the mapping with the chart
   chart %<>% merge(df.mapping, by='types')
   
@@ -106,3 +89,20 @@ f.stress.sim <- function(chart,
   chart <- bind_rows(chart.k)
   return(chart)
 }
+
+# Some test data
+# chart <- data.frame(keys = c(1,2,3,4),
+#                     types = c('note', 'lnoteh', 'lnotel', 'note'),
+#                     offsets = c(10,20,30,40))
+# 
+# df.mapping <- data.frame(types = c('note', 'lnoteh', 'lnotel'),
+#                          adds = c(50,50,25),
+#                          mults = c(1.1, 1.1, 1.03))
+# 
+# 
+# f.spike <- function(stress, args){
+#   return((stress + args$adds) * args$mults)
+# }
+# f.decay <- function(stress, duration){
+#   return(stress / (2 ** duration))
+# }
