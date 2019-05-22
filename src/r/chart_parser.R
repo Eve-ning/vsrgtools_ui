@@ -1,4 +1,26 @@
-f.chart.load <- function(){
+path.chart <- "src/chart/"
+path.feather <- "src/feather/"
+
+f.chart.parse <- function(chart.path){
+  #' Parses the chart into a data.frame
+  #' 
+  #' Only .osu formats are supported for now.
+  #' 
+  #' @param chart.path Path of the chart to be parsed
+  
+  chart.f = file(chart.path, open='r')
+  chart = readLines(chart.f)
+  
+  # To add a switch/ifelse statement if more formats are done
+  return(f.chart.parse.osu(chart))
+}
+
+f.chart.parse.osu <- function(chart) {
+  #' Parses the osu chart into a data.frame
+  #' 
+  #' @param chart The chart to be parsed, in a vector of characters.
+  #' This can be provided via readLines function.
+  #' 
   require(dplyr)
   require(tidyr)
   require(magrittr)
@@ -6,61 +28,67 @@ f.chart.load <- function(){
   require(reshape2)
   require(docstring)
   
-  # Test vector
-  'osu <- c(
-      "CircleSize: 7",
-      "[HitObjects]",
-      "182,192,25029,1,0,0:0:0:66:LR_Kick Loud Bass Drop.wav",
-      "109,192,25029,128,0,26779:0:0:0:100:LR3_GreatDrum.wav",
-      "256,192,25029,1,0,0:0:0:33:LR_Drum Rim Fast.wav",
-      "329,192,25154,128,0,25279:0:0:0:80:LR3_GreatDrum.wav",
-      "402,192,25279,128,0,25404:0:0:0:40:LR_J Hit Pong.wav",
-      "329,192,25404,128,0,25654:0:0:0:80:LR3_GreatDrum.wav",
-      "475,192,25654,128,0,25779:0:0:0:80:LR3_GreatDrum.wav",
-      "329,192,25779,128,0,25904:0:0:0:40:LR_J Hit Pong.wav",
-      "402,192,25904,128,0,26029:0:0:0:80:LR3_GreatDrum.wav",
-      "329,192,26029,128,0,26279:0:0:0:80:LR3_GreatDrum.wav",
-      "402,192,26279,128,0,26404:0:0:0:40:LR_J Hit Pong.wav"
-      )'
-  
-  
-  f.extract <- function(osu) {
-    cs.i <- pmatch('CircleSize:', osu)
-    keys <<- as.integer(substr(osu[cs.i],
-                                   start = 12,
-                                   stop = nchar(osu[cs.i])))
-    ho.i <- pmatch('[HitObjects]', osu)
-    osu <- osu[ho.i+1:length(osu)]
-    return(osu)
+  f.extract <- function(chart) {
+    cs.i <- pmatch('CircleSize:', chart)
+    keys <- as.integer(substr(chart[cs.i],
+                              start = 12,
+                              stop = nchar(chart[cs.i])))
+    ho.i <- pmatch('[HitObjects]', chart)
+    chart <- chart[ho.i+1:length(chart)]
+    return(list("chart" = chart, "keys" = keys))
   }
   
-  osu <- f.extract(osu)
-  osu <- data.frame(osu, stringsAsFactors = F)
-  colnames(osu) <- "txt"
+  extract <- f.extract(chart)
+  chart <- extract$chart
+  keys <- extract$keys
   
-  osu$is.ln <- str_count(string = osu$txt,
-                         pattern = ":") == 5
+  chart <- data.frame(chart, stringsAsFactors = F)
+  colnames(chart) <- "txt"
   
-  osu %<>% separate(col=txt,
-                    sep=":",
-                    into=c("txt","_"),
-                    extra="drop")
+  chart$is.ln <- str_count(string = chart$txt,
+                           pattern = ":") == 5
   
-  osu %<>% separate(col=txt,
-                    sep=",",
-                    into=c("axis",".0","offsets",".1",".2","offsets.end"))
+  chart %<>% separate(col=txt,
+                      sep=":",
+                      into=c("txt","_"),
+                      extra="drop")
   
-  osu$keys = round((as.integer(osu$axis) * osu.keys - 256) / 512)  
-  osu %<>% na.omit() 
-  osu$offsets.end[osu$is.ln == F] <- NA
-  osu %<>% mutate_if(is.character, as.numeric)
+  chart %<>% separate(col=txt,
+                      sep=",",
+                      into=c("axis",".0","offsets",".1",".2","offsets.end"))
   
-  osu <- osu[c('offsets', 'offsets.end', 'keys', 'is.ln')]
-  osu$offsets.start[osu$is.ln] <- osu$offsets[osu$is.ln]
-  osu$offsets[osu$is.ln] <- NA
-  osu <- melt(osu, id.vars = 'keys',
-              na.rm = T, variable.name = 'types',
-              value.name = 'offsets')
-  osu <- subset(osu, types != 'is.ln')
-  return(osu)
+  chart$keys = round((as.integer(chart$axis) * keys - 256) / 512)  
+  chart %<>% na.omit() 
+  chart$offsets.end[chart$is.ln == F] <- NA
+  chart %<>% mutate_if(is.character, as.numeric)
+  
+  chart <- chart[c('offsets', 'offsets.end', 'keys', 'is.ln')]
+  chart$offsets.start[chart$is.ln] <- chart$offsets[chart$is.ln]
+  chart$offsets[chart$is.ln] <- NA
+  chart <- melt(chart, id.vars = 'keys',
+                na.rm = T, variable.name = 'types',
+                value.name = 'offsets')
+  chart <- subset(chart, types != 'is.ln')
+  return(chart)
 }
+
+f.chart.parse("src/osu/maniera.osu")
+
+
+# # Test vector
+# chart <- c(
+#   "CircleSize: 7",
+#   "[HitObjects]",
+#   "182,192,25029,1,0,0:0:0:66:LR_Kick Loud Bass Drop.wav",
+#   "109,192,25029,128,0,26779:0:0:0:100:LR3_GreatDrum.wav",
+#   "256,192,25029,1,0,0:0:0:33:LR_Drum Rim Fast.wav",
+#   "329,192,25154,128,0,25279:0:0:0:80:LR3_GreatDrum.wav",
+#   "402,192,25279,128,0,25404:0:0:0:40:LR_J Hit Pong.wav",
+#   "329,192,25404,128,0,25654:0:0:0:80:LR3_GreatDrum.wav",
+#   "475,192,25654,128,0,25779:0:0:0:80:LR3_GreatDrum.wav",
+#   "329,192,25779,128,0,25904:0:0:0:40:LR_J Hit Pong.wav",
+#   "402,192,25904,128,0,26029:0:0:0:80:LR3_GreatDrum.wav",
+#   "329,192,26029,128,0,26279:0:0:0:80:LR3_GreatDrum.wav",
+#   "402,192,26279,128,0,26404:0:0:0:40:LR_J Hit Pong.wav"
+# )
+
