@@ -11,7 +11,8 @@ f.stress.sim <- function(chart,
   #' @param f.spike A **Function** to dictate how stress
   #' should change upon encountering different types
   #' 
-  #' The function **must** have a 'stress' argument.
+  #' The function **must** have 'stress' and 'args'
+  #' arguments.
   #' The function **must** return the new 'stress' value
   #' 
   #' Note: Arguments used in the function should be
@@ -58,35 +59,43 @@ f.stress.sim <- function(chart,
   chart$stress.decay <- NA
   
   # We will be looping through the chart by key
-  chart.k <- split(x = chart, f = chart$keys)
-  for (key in 1:length(chart.k)){
+  chart <- chart[order(chart$offsets, decreasing = F),]
+  chart.k.split <- split(x = chart, f = chart$keys)
+  chart.k.list <- c()
+  for (key in 1:length(chart.k.split)){
     stress = 0
     offset.old = 0
     
-    for (row in 1:nrow(chart.k[[key]])) {
+    chart.k <- chart.k.split[[key]]
+    
+    for (row in 1:nrow(chart.k)) {
       # This extracts all user defined columns as a list with named
       # arguments.
-      args <- as.list(chart.k[[key]][row, args.columns])
+      args <- as.list(chart.k[row, args.columns])
       
       # Current offset
-      offset.new <- as.numeric(chart[row, "offsets"])
+      offset.new <- as.numeric(chart.k[row, "offsets"])
       
       # Calculate decay then assign to dataframe
-      stress <- f.decay(stress, offset.new - offset.old)
+      stress <- f.decay(stress = stress,
+                        duration = offset.new - offset.old)
       stress <- max(stress, 0) # Stress will not go below 0
-      chart.k[[key]][row, "stress.decay"] <- stress
+      chart.k[row, "stress.decay"] <- stress
       
       # Calculate spike then assign to dataframe
-      stress <- f.spike(stress, args)
-      chart.k[[key]][row, "stress.spike"] <- stress
+      stress <- f.spike(stress = stress,
+                        args = args)
+      chart.k[row, "stress.spike"] <- stress
       
       # Update new offset
-      offset.old <- chart[row, "offsets"]
+      offset.old <- chart.k[row, "offsets"]
     }
+    
+    chart.k.list <- append(chart.k.list, list(chart.k))
   }
   
   # Join split chart into 1
-  chart <- bind_rows(chart.k)
+  chart <- bind_rows(chart.k.list)
   return(chart)
 }
 
