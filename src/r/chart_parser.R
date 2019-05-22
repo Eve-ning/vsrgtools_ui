@@ -1,12 +1,14 @@
-path.chart <- "src/chart/"
-path.feather <- "src/feather/"
-
 f.chart.parse <- function(chart.path){
   #' Parses the chart into a data.frame
   #' 
   #' Only .osu formats are supported for now.
   #' 
   #' @param chart.path Path of the chart to be parsed
+  #' @return A data.frame consisting of the note's data only.
+  #' Columns: keys, types, offsets
+  
+  path.chart <- "src/chart/"
+  path.feather <- "src/feather/"
   
   chart.f = file(chart.path, open='r')
   chart = readLines(chart.f)
