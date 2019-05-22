@@ -2,9 +2,7 @@ f.stress.sim <- function(chart,
                          f.spike,
                          f.decay,
                          df.mapping,
-                         stress.init = 0.0,
-                         decay.include = T,
-                         decay.delay = 1){
+                         stress.init = 0.0){
   #' Simulates the stress
   #' 
   #' @description 
@@ -43,12 +41,6 @@ f.stress.sim <- function(chart,
   #' 
   #' @param stress.init The **numeric** of 'stress' to 
   #' initialize the simulation with
-  #' 
-  #' @param decay.include **Logical**. If True, the decay
-  #' values will be reflected on the resulting simulation.
-  #' 
-  #' @param decay.delay The **integer** indicating how 
-  #' many ms delay before the spike value.
   #' 
   #' 
     return(stress / (2 ** duration))
