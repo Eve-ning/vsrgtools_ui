@@ -74,6 +74,7 @@ f.chart.parse <- function(chart.path){
   return(f.chart.parse.osu(chart))
 }
 
+f.chart.parse("src/osu/maniera.osu")
 
 
 # # Test vector
