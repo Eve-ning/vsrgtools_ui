@@ -87,8 +87,6 @@ Using RShiny, we should implement a UI that we can tweak to form a good simulati
 ## Machine Learning
 Depends on if we want to use this, we can somehow integrate machine learning in here to polish the results, rather than eyeballing it.
 
-**
-
 # Input
 
 *Notice: all the following code are pseudocode, they are not actually ran*

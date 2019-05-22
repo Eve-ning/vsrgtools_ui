@@ -1,5 +1,3 @@
-
-
 source("src/r/chart_parser.R")
 source("src/r/stress_sim.R")
 
@@ -29,5 +27,6 @@ library(ggplot2)
 ggplot(chart.sim) +
   aes(x = offsets,
       y = stress.decay) +
-  geom_line(aes(group = keys,
-                color = keys))
+  geom_smooth(aes(group = keys,
+                  color = keys),
+              span=0.3, se=F)
