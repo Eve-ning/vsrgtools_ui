@@ -43,10 +43,66 @@ f.stress.sim <- function(chart,
   #' initialize the simulation with
   #' 
   #' 
-    return(stress / (2 ** duration))
+   
+  require(magrittr)
+  require(dplyr)
   
+  # Some test data
+  # chart <- data.frame(keys = c(1,2,3,4),
+  #                     types = c('note', 'lnoteh', 'lnotel', 'note'),
+  #                     offsets = c(10,20,30,40))
+  # 
+  # df.mapping <- data.frame(types = c('note', 'lnoteh', 'lnotel'),
+  #                          adds = c(50,50,25),
+  #                          mults = c(1.1, 1.1, 1.03))
+  # 
+  # 
+  # f.spike <- function(stress, args){
+  #   return((stress + args$adds) * args$mults)
+  # }
+  # f.decay <- function(stress, duration){
+  #   return(stress / (2 ** duration))
+  # }
+  
+  # Firstly, we join the mapping with the chart
   chart %<>% merge(df.mapping, by='types')
   
-    }
+  # These are the column indexes of the custom arguments
+  args.columns = 4:(ncol(chart))
   
+  # Allocate columns in advance
+  chart$stress.spike <- NA
+  chart$stress.decay <- NA
+  
+  # We will be looping through the chart by key
+  chart.k <- split(x = chart, f = chart$keys)
+  for (key in 1:length(chart.k)){
+    stress = 0
+    offset.old = 0
+    
+    for (row in 1:nrow(chart.k[[key]])) {
+      # This extracts all user defined columns as a list with named
+      # arguments.
+      args <- as.list(chart.k[[key]][row, args.columns])
+      
+      # Current offset
+      offset.new <- as.numeric(chart[row, "offsets"])
+      
+      # Calculate decay then assign to dataframe
+      stress <- f.decay(stress, offset.new - offset.old)
+      stress <- max(stress, 0) # Stress will not go below 0
+      chart.k[[key]][row, "stress.decay"] <- stress
+      
+      # Calculate spike then assign to dataframe
+      stress <- f.spike(stress, args)
+      chart.k[[key]][row, "stress.spike"] <- stress
+      
+      # Update new offset
+      offset.old <- chart[row, "offsets"]
+    }
+  }
+  
+  # Join split chart into 1
+  chart <- bind_rows(chart.k)
+  return(chart)
 }
