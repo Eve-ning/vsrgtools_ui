@@ -7,9 +7,6 @@ f.chart.parse <- function(chart.path){
   #' @return A data.frame consisting of the note's data only.
   #' Columns: keys, types, offsets
   
-  path.chart <- "src/chart/"
-  path.feather <- "src/feather/"
-  
   chart.f = file(chart.path, open='r')
   chart = readLines(chart.f)
   
@@ -53,16 +50,16 @@ f.chart.parse <- function(chart.path){
     
     chart %<>% separate(col=txt,
                         sep=",",
-                        into=c("axis",".0","offsets",".1",".2","offsets.end"))
+                        into=c("axis",".0","note",".1",".2","lnotel"))
     
     chart$keys = round((as.integer(chart$axis) * keys - 256) / 512)  
     chart %<>% na.omit() 
-    chart$offsets.end[chart$is.ln == F] <- NA
+    chart$lnotel[chart$is.ln == F] <- NA
     chart %<>% mutate_if(is.character, as.numeric)
     
-    chart <- chart[c('offsets', 'offsets.end', 'keys', 'is.ln')]
-    chart$offsets.start[chart$is.ln] <- chart$offsets[chart$is.ln]
-    chart$offsets[chart$is.ln] <- NA
+    chart <- chart[c('note', 'lnotel', 'keys', 'is.ln')]
+    chart$lnoteh[chart$is.ln] <- chart$note[chart$is.ln]
+    chart$note[chart$is.ln] <- NA
     chart <- melt(chart, id.vars = 'keys',
                   na.rm = T, variable.name = 'types',
                   value.name = 'offsets')
@@ -73,8 +70,6 @@ f.chart.parse <- function(chart.path){
   # To add a switch/ifelse statement if more formats are done
   return(f.chart.parse.osu(chart))
 }
-
-f.chart.parse("src/osu/maniera.osu")
 
 
 # # Test vector
