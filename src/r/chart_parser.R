@@ -11,68 +11,67 @@ f.chart.parse <- function(chart.path){
   chart.f = file(chart.path, open='r')
   chart = readLines(chart.f)
   
+  f.chart.parse.osu <- function(chart) {
+    #' Parses the osu chart into a data.frame
+    #' 
+    #' @param chart The chart to be parsed, in a vector of characters.
+    #' This can be provided via readLines function.
+    #' 
+    require(dplyr)
+    require(tidyr)
+    require(magrittr)
+    require(stringr)
+    require(reshape2)
+    require(docstring)
+    
+    f.extract <- function(chart) {
+      cs.i <- pmatch('CircleSize:', chart)
+      keys <- as.integer(substr(chart[cs.i],
+                                start = 12,
+                                stop = nchar(chart[cs.i])))
+      ho.i <- pmatch('[HitObjects]', chart)
+      chart <- chart[ho.i+1:length(chart)]
+      return(list("chart" = chart, "keys" = keys))
+    }
+    
+    extract <- f.extract(chart)
+    chart <- extract$chart
+    keys <- extract$keys
+    
+    chart <- data.frame(chart, stringsAsFactors = F)
+    colnames(chart) <- "txt"
+    
+    chart$is.ln <- str_count(string = chart$txt,
+                             pattern = ":") == 5
+    
+    chart %<>% separate(col=txt,
+                        sep=":",
+                        into=c("txt","_"),
+                        extra="drop")
+    
+    chart %<>% separate(col=txt,
+                        sep=",",
+                        into=c("axis",".0","offsets",".1",".2","offsets.end"))
+    
+    chart$keys = round((as.integer(chart$axis) * keys - 256) / 512)  
+    chart %<>% na.omit() 
+    chart$offsets.end[chart$is.ln == F] <- NA
+    chart %<>% mutate_if(is.character, as.numeric)
+    
+    chart <- chart[c('offsets', 'offsets.end', 'keys', 'is.ln')]
+    chart$offsets.start[chart$is.ln] <- chart$offsets[chart$is.ln]
+    chart$offsets[chart$is.ln] <- NA
+    chart <- melt(chart, id.vars = 'keys',
+                  na.rm = T, variable.name = 'types',
+                  value.name = 'offsets')
+    chart <- subset(chart, types != 'is.ln')
+    return(chart)
+  }
+  
   # To add a switch/ifelse statement if more formats are done
   return(f.chart.parse.osu(chart))
 }
 
-f.chart.parse.osu <- function(chart) {
-  #' Parses the osu chart into a data.frame
-  #' 
-  #' @param chart The chart to be parsed, in a vector of characters.
-  #' This can be provided via readLines function.
-  #' 
-  require(dplyr)
-  require(tidyr)
-  require(magrittr)
-  require(stringr)
-  require(reshape2)
-  require(docstring)
-  
-  f.extract <- function(chart) {
-    cs.i <- pmatch('CircleSize:', chart)
-    keys <- as.integer(substr(chart[cs.i],
-                              start = 12,
-                              stop = nchar(chart[cs.i])))
-    ho.i <- pmatch('[HitObjects]', chart)
-    chart <- chart[ho.i+1:length(chart)]
-    return(list("chart" = chart, "keys" = keys))
-  }
-  
-  extract <- f.extract(chart)
-  chart <- extract$chart
-  keys <- extract$keys
-  
-  chart <- data.frame(chart, stringsAsFactors = F)
-  colnames(chart) <- "txt"
-  
-  chart$is.ln <- str_count(string = chart$txt,
-                           pattern = ":") == 5
-  
-  chart %<>% separate(col=txt,
-                      sep=":",
-                      into=c("txt","_"),
-                      extra="drop")
-  
-  chart %<>% separate(col=txt,
-                      sep=",",
-                      into=c("axis",".0","offsets",".1",".2","offsets.end"))
-  
-  chart$keys = round((as.integer(chart$axis) * keys - 256) / 512)  
-  chart %<>% na.omit() 
-  chart$offsets.end[chart$is.ln == F] <- NA
-  chart %<>% mutate_if(is.character, as.numeric)
-  
-  chart <- chart[c('offsets', 'offsets.end', 'keys', 'is.ln')]
-  chart$offsets.start[chart$is.ln] <- chart$offsets[chart$is.ln]
-  chart$offsets[chart$is.ln] <- NA
-  chart <- melt(chart, id.vars = 'keys',
-                na.rm = T, variable.name = 'types',
-                value.name = 'offsets')
-  chart <- subset(chart, types != 'is.ln')
-  return(chart)
-}
-
-f.chart.parse("src/osu/maniera.osu")
 
 
 # # Test vector
