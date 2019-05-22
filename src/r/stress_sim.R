@@ -1,7 +1,10 @@
 f.stress.sim <- function(chart,
                          f.spike,
                          f.decay,
-                         df.mapping){
+                         df.mapping,
+                         stress.init = 0.0,
+                         decay.include = T,
+                         decay.delay = 1){
   #' Simulates the stress
   #' 
   #' @description 
@@ -27,7 +30,7 @@ f.stress.sim <- function(chart,
   #' Note: 'duration' is measured in **ms**. There are no
   #' custom arguments.
   #' 
-  #' @param df.mapping A 'mapping' data.frame to 
+  #' @param df.mapping A 'mapping' **data.frame** to 
   #' indicate what constants to use for `f.spike`.
   #' 
   #' The table must contain the column 'types', with
@@ -38,7 +41,20 @@ f.stress.sim <- function(chart,
   #' Note: Extra column names must be named exactly
   #' the same as arguments in `f.spike`
   #' 
+  #' @param stress.init The **numeric** of 'stress' to 
+  #' initialize the simulation with
+  #' 
+  #' @param decay.include **Logical**. If True, the decay
+  #' values will be reflected on the resulting simulation.
+  #' 
+  #' @param decay.delay The **integer** indicating how 
+  #' many ms delay before the spike value.
+  #' 
+  #' 
+    return(stress / (2 ** duration))
   
+  chart %<>% merge(df.mapping, by='types')
   
+    }
   
 }
