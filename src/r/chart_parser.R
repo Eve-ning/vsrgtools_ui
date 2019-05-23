@@ -52,7 +52,7 @@ f.chart.parse <- function(chart.path){
                         sep=",",
                         into=c("axis",".0","note",".1",".2","lnotel"))
     
-    chart$keys = round((as.integer(chart$axis) * keys - 256) / 512)  
+    chart$keys = round((as.integer(chart$axis) * keys - 256) / 512) + 1
     chart %<>% na.omit() 
     chart$lnotel[chart$is.ln == F] <- NA
     chart %<>% mutate_if(is.character, as.numeric)
