@@ -22,7 +22,7 @@ f.replay.parse <- function(map, replay.path){
     "Map should only come in keys, we will need to 
     transform it into actions, which will help in
     pairing"
-    map$actions <- map$keys + 1
+    map$actions <- map$keys
     map$actions[map$types == 'lnotel'] <- -map$actions[map$types == 'lnotel']
     map$replay.offsets <- NA
     actions.unq <- unique(map$actions)
