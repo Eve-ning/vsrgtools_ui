@@ -66,7 +66,7 @@ f.stress.sim <- function(chart,
   This is used to do a OUTER JOIN to each key groups,
   hence you get NA data on those rows that shouldn't
   have data."
-  chart.frame <- data.frame(offsets=unique(chart$offsets)) 
+  chart.frame <- data.frame(offsets=unique(chart$offsets))
   
   # We will be looping through the chart by key
   chart.k.split <- split(x = chart, f = chart$keys)
@@ -77,6 +77,7 @@ f.stress.sim <- function(chart,
     
     chart.k <- chart.k.split[[key]]
     chart.k <- merge(chart.k, chart.frame, by='offsets', all=T)
+    chart.k$keys <- key
     for (row in 1:nrow(chart.k)) {
       
       "is.na check here is to check for the original notes,
@@ -122,6 +123,9 @@ f.stress.sim <- function(chart,
   
   # Join charts of different keys into one
   chart <- bind_rows(chart.k.list)
+  chart$stress <- pmax(chart$stress.spike,
+                       chart$stress.decay,
+                       na.rm = T) 
   return(chart)
 }
 
