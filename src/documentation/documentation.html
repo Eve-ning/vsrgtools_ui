@@ -455,6 +455,37 @@ $(document).ready(function () {
 <p><strong>Map difficulty should not be dynamically calculated from player performance</strong></p>
 </div>
 </div>
+<div id="layout" class="section level1">
+<h1>Layout</h1>
+<div id="resource-downloading" class="section level2">
+<h2>Resource Downloading</h2>
+<p>This will be done in Python, no exceptions</p>
+</div>
+<div id="parsing" class="section level2">
+<h2>Parsing</h2>
+<p>This can be done in R or Python, I’m leaning more towards R since it’ll make the workflow easier to handle in one IDE</p>
+</div>
+<div id="simulating" class="section level2">
+<h2>Simulating</h2>
+<p>This can be done in R or Python, similarly, I’m leaning towards R due to performance issues when it comes to <code>reticulate</code></p>
+</div>
+<div id="detailing" class="section level2">
+<h2>Detailing</h2>
+<p>This should be done in R due to simulated DataFrames being easier to work in R than PyPandas.</p>
+</div>
+<div id="plotting" class="section level2">
+<h2>Plotting</h2>
+<p>Using R through ggplot2</p>
+</div>
+<div id="analysing-correlations" class="section level2">
+<h2>Analysing correlations</h2>
+<p>Using RShiny, we should implement a UI that we can tweak to form a good simulation.</p>
+</div>
+<div id="machine-learning" class="section level2">
+<h2>Machine Learning</h2>
+<p>Depends on if we want to use this, we can somehow integrate machine learning in here to polish the results, rather than eyeballing it.</p>
+</div>
+</div>
 <div id="input" class="section level1">
 <h1>Input</h1>
 <p><em>Notice: all the following code are pseudocode, they are not actually ran</em></p>
@@ -482,6 +513,50 @@ Column |   Dev   | Offset
 <h3>Offset Grouping for Players</h3>
 <p>There may be queries on why offsets should be grouped. The main reason for grouping lies later in the document, where <strong>Grace Periods</strong> and <strong>Column Categorization</strong> occurs.</p>
 </div>
+</div>
+<div id="identifying-the-model" class="section level2">
+<h2>Identifying the model</h2>
+<p>Next, we establish what the model should perform and what variables can we provide it with.</p>
+<p>Essentially, the model should be:</p>
+<p><span class="math display">\[f(column, type) = dev\]</span></p>
+</div>
+<div id="hard-pattern-recognition" class="section level2">
+<h2>Hard Pattern recognition</h2>
+<p>Just an idea, but I think it’s possible to break down harder patterns to simpler chunks.</p>
+<pre><code>[13][2] -&gt; [1][2] + [3][2].
+What makes the pattern so hard is the [1][2], [3][2] just makes it
+slightly harder.
+
+So we can look into singular pairs instead of unique patterns.
+
+Let&#39;s consider
+
+Offset | Type | Key | K.Next.1 | K.Next.2 | ... | K.Next.7
+----------------------------------------------------------
+
+We can find out what&#39;s the next closest key to the current one
+If Key = 1 and K.Next.1 = 100, means the next key is 100ms after
+the current one, making it a 100ms jack.
+This means we can specifically calculate the difficulty on that
+We can tweak the difficulty via a table
+
+EXAMPLE
+K | 1 | 2 | 3 | 4 |
+--+----------------
+1 |1.5[1.2]1.1 1.1
+--|---+---+---+---+
+2 [1.2]1.5[1.1]1.1
+--|---+---+---+---+
+3 |1.1[1.1]1.5 1.2
+--|---+---+---+---+
+4 |1.1 1.1 1.2 1.5
+
+So for a [13][2] in 100ms: &lt;highlighted in table&gt;
+
+function(stress.current, 1.2, 100) # for key 1
+function(stress.current, 1.1, 100) # for key 3
+
+</code></pre>
 </div>
 </div>
 

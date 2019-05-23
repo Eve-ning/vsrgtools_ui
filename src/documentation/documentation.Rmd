@@ -133,7 +133,46 @@ Essentially, the model should be:
 
 $$f(column, type) = dev$$
 
+## Hard Pattern recognition
 
+Just an idea, but I think it's possible to break down harder patterns to simpler chunks.
+
+```
+[13][2] -> [1][2] + [3][2].
+What makes the pattern so hard is the [1][2], [3][2] just makes it
+slightly harder.
+
+So we can look into singular pairs instead of unique patterns.
+
+Let's consider
+
+Offset | Type | Key | K.Next.1 | K.Next.2 | ... | K.Next.7
+----------------------------------------------------------
+
+We can find out what's the next closest key to the current one
+If Key = 1 and K.Next.1 = 100, means the next key is 100ms after
+the current one, making it a 100ms jack.
+This means we can specifically calculate the difficulty on that
+We can tweak the difficulty via a table
+
+EXAMPLE
+K | 1 | 2 | 3 | 4 |
+--+----------------
+1 |1.5[1.2]1.1 1.1
+--|---+---+---+---+
+2 [1.2]1.5[1.1]1.1
+--|---+---+---+---+
+3 |1.1[1.1]1.5 1.2
+--|---+---+---+---+
+4 |1.1 1.1 1.2 1.5
+
+So for a [13][2] in 100ms: <highlighted in table>
+
+function(stress.current, 1.2, 100) # for key 1
+function(stress.current, 1.1, 100) # for key 3
+
+
+```
 
 
 
