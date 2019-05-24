@@ -9,7 +9,7 @@ source("src/r/chart_parser.R")
 source("src/r/stress_sim.R")
 source("src/r/replay_parser.R")
 
-chart <- f.chart.parse("src/osu/tldne.osu")
+chart <- f.chart.parse("src/osu/world_frag.osu")
 chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
 
 f.decay <- function(stress, duration){
@@ -28,5 +28,14 @@ chart.sim <- f.stress.sim(chart = chart,
                           f.decay = f.decay,
                           df.mapping = df.mapping,
                           stress.init = 0)
-
+require(ggdark)
+ggplot(chart.sim) +
+  aes(x = offsets,
+      y = stress) +
+  geom_line(aes(group = keys,
+                color = keys),size = 1
+            ) +
+  geom_line(aes(group = keys,
+                color = keys),size = 1
+  ) + dark_theme_gray()
 
