@@ -13,7 +13,7 @@ chart <- f.chart.parse("src/osu/world_frag.osu")
 chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
 
 f.decay <- function(stress, duration){
-  return(stress / 2 ** (duration / 1000))
+  return(stress / 1.5 ** (duration / 10000))
 }
 f.spike <- function(stress, args){
   return((stress + args$adds) / args$mults)
@@ -33,9 +33,15 @@ ggplot(chart.sim) +
   aes(x = offsets,
       y = stress) +
   geom_line(aes(group = keys,
-                color = keys),size = 1
+                color = keys),
+            size = 1
             ) +
-  geom_line(aes(group = keys,
-                color = keys),size = 1
-  ) + dark_theme_gray()
+  geom_smooth(aes(group = keys,
+                  color = keys),
+              size = 0.4,
+              se = F
+  ) + 
+  ggtitle(label = "World Fragments",
+          subtitle = "Simulated Stress by Density") +
+  dark_theme_gray()
 
