@@ -1,5 +1,5 @@
 f.diff.broadcast <- function(chart,
-                             ignore.lnotel = T){
+                             ignore.types = c('lnotel')){
   #' For each row, gets the time before the next key
   #' 
   #' This will not overwrite the current columns,
@@ -13,11 +13,11 @@ f.diff.broadcast <- function(chart,
   require(reshape2)
   require(Rfast)
   
-  # This logical is a temporary code, we may change
-  # ignore.lnotel to be more modifiable.
-  if (ignore.lnotel){
-    chart$types[chart$types == 'lnotel'] <- NA
-  }
+  # Drop NA rows
+  chart <- subset(chart, !is.na(chart$types))
+  
+  # Ignores any types that matches the list
+  chart$types[chart$types %in% ignore.types] <- NA
   
   # Cast keys to longer table.
   chart %<>% 
@@ -56,11 +56,17 @@ f.diff.broadcast <- function(chart,
     # Reset Mask is to reset the difference once a note is
     # encountered
     reset.mask <- apply(chart[row, col:(col+keys-1)],
-                        2,
+                        2, 
                         FUN=is.na)
     diff.trackers[!reset.mask] <- 0
     
     # Assign old offset
     offset.old <- offset
   }
+  
+  # This changes all negative numbers to -1
+  # It is the result of checking diffs before a note happens
+  chart[chart < 0] <- -1
+  
+  return(chart)
 }
