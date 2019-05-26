@@ -32,7 +32,29 @@ chart.sim <- f.stress.sim(chart = chart,
 chart.bcst <- f.diff.broadcast(chart.sim,
                                ignore.types = c('lnotel'))
 
-require(ggdark)
+chart.bcst.k <- chart.bcst %>% 
+  melt(measure.vars = 2:8,
+       variable.name = 'keys',
+       value.name = 'types',
+       na.rm = T)
+chart.bcst.k.d <- chart.bcst.k %>% 
+  melt(measure.vars = 2:8,
+       variable.name = 'diff.types',
+       value.name = 'diffs',
+       na.rm = T)
+
+require(ggdark) 
+ggplot(chart.bcst.k.d) +
+  aes(x=offsets,
+      y=diffs) +
+  geom_bar(stat = 'identity',
+           aes(group=diff.types,
+               color=diff.types),
+           show.legend = F) +
+  dark_theme_minimal() +
+  facet_wrap(~keys, ncol=2)
+
+
 ggplot(chart.sim) +
   aes(x = offsets,
       y = stress) +
