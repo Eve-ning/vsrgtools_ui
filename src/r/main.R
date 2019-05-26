@@ -29,14 +29,18 @@ chart.sim <- f.stress.sim(chart = chart,
                           f.decay = f.decay,
                           df.mapping = df.mapping,
                           stress.init = 0)
+
+
 chart.bcst <- f.diff.broadcast(chart.sim,
                                ignore.types = c('lnotel'))
 
+# Melt by original keys
 chart.bcst.k <- chart.bcst %>% 
   melt(measure.vars = 2:8,
        variable.name = 'keys',
        value.name = 'types',
        na.rm = T)
+# Melt by diffs
 chart.bcst.k.d <- chart.bcst.k %>% 
   melt(measure.vars = 2:8,
        variable.name = 'diff.types',
@@ -44,6 +48,8 @@ chart.bcst.k.d <- chart.bcst.k %>%
        na.rm = T)
 
 require(ggdark) 
+
+# Generate Broadcasted.
 ggplot(chart.bcst.k.d) +
   aes(x=offsets,
       y=diffs) +
