@@ -8,9 +8,10 @@ library(magrittr)
 source("src/r/chart_parser.R")
 source("src/r/stress_sim.R")
 source("src/r/replay_parser.R")
+source("src/r/diff_broadcast.R")
 
 chart <- f.chart.parse("src/osu/world_frag.osu")
-chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
+# chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
 
 f.decay <- function(stress, duration){
   return(stress / 1.5 ** (duration / 10000))
@@ -28,6 +29,9 @@ chart.sim <- f.stress.sim(chart = chart,
                           f.decay = f.decay,
                           df.mapping = df.mapping,
                           stress.init = 0)
+chart.bcst <- f.diff.broadcast(chart.sim,
+                               ignore.types = c('lnotel'))
+
 require(ggdark)
 ggplot(chart.sim) +
   aes(x = offsets,
