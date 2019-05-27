@@ -12,7 +12,7 @@ source("src/r/diff_broadcast.R")
 
 chart <- f.chart.parse("src/osu/world_frag.osu")
 # chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
-
+{ # Simulate
 f.decay <- function(stress, duration){
   return(stress / 1.5 ** (duration / 10000))
 }
@@ -29,23 +29,14 @@ chart.sim <- f.stress.sim(chart = chart,
                           f.decay = f.decay,
                           df.mapping = df.mapping,
                           stress.init = 0)
+}
 
-
+# broadcast on diff
 chart.bcst <- f.diff.broadcast(chart.sim,
                                ignore.types = c('lnotel'))
 
-# Melt by original keys
-chart.bcst.k <- chart.bcst %>% 
-  melt(measure.vars = 2:8,
-       variable.name = 'keys',
-       value.name = 'types',
-       na.rm = T)
-# Melt by diffs
-chart.bcst.k.d <- chart.bcst.k %>% 
-  melt(measure.vars = 2:8,
-       variable.name = 'diff.types',
-       value.name = 'diffs',
-       na.rm = T)
+
+
 
 require(ggdark) 
 

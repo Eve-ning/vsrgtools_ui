@@ -68,5 +68,20 @@ f.diff.broadcast <- function(chart,
   # It is the result of checking diffs before a note happens
   chart[chart < 0] <- -1
   
+  # We will convert it into a long table
+  # Melt by original keys
+  chart %<>% 
+    melt(measure.vars = 2:8,
+         variable.name = 'keys',
+         value.name = 'types',
+         na.rm = T)
+  
+  # Melt by diffs
+  chart %<>% 
+    melt(measure.vars = 2:8,
+         variable.name = 'diff.types',
+         value.name = 'diffs',
+         na.rm = T)
+  
   return(chart)
 }
