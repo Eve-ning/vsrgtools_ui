@@ -82,7 +82,7 @@ f.diff.broadcast <- function(chart,
   # Melt by diffs
   chart %<>% 
     melt(measure.vars = 2:8,
-         variable.name = 'diff.types',
+         variable.name = 'keys.tos',
          value.name = 'diffs',
          na.rm = T)
   
