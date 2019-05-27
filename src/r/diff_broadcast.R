@@ -76,12 +76,19 @@ f.diff.broadcast <- function(chart,
          value.name = 'types',
          na.rm = T)
   
+  chart$keys %<>%
+    as.numeric()
+  
   # Melt by diffs
   chart %<>% 
     melt(measure.vars = 2:8,
          variable.name = 'diff.types',
          value.name = 'diffs',
          na.rm = T)
+  
+  chart$diff.types %<>%
+    regmatches(regexpr("[[:digit:]]+", .)) %>% 
+    as.numeric()
   
   return(chart)
 }
