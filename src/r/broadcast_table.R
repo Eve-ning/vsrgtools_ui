@@ -1,4 +1,33 @@
-bcst.match <- matrix(nrow = 7, ncol = 7)keys = 7
+#' ! This is a user-defined file !
+#'We will probably port this towards a RShiny UI
+#'
+#'Broadcast Table
+#'The broadcast table aims to do an INNER JOIN with
+#'the current broadcasted data.frame.
+#'
+#'It will be joined on 'keys' and 'diff.types'
+#'keys : <x>
+#'diff.types: X<x>.diff
+#'
+#'Fingers are denoted as
+#'P|inky
+#'R|ing
+#'M|iddle
+#'I|ndex
+#'T|humb
+#'
+#'So the parameter denoting Pinky to Ring would be move.p.r
+#'
+#'Function evaluated would be:
+#'move.f <- function(diff, move) {
+#'    ...
+#'    return(val)
+#'}
+
+
+
+
+keys = 7
 bcst.match <- data.frame(matrix(nrow = keys, ncol = keys))
 
 
