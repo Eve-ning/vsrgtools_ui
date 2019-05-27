@@ -54,5 +54,24 @@ move.fngr[] = c(
   c(2.7,1.2,1.2,5.0,2.4), # [I]
   c(2.7,1.7,1.5,1.9,5.0)  # [T]
 )
-bcst.match
+move.fngr$froms = c('P','R','M','I','T')
+move.fngr %>% 
+  melt(variable.name = 'tos',
+       value.name = 'moves')
 
+move.mapping = list(
+  move.key.4 <- data.frame(keys = 1:4,
+                           fingers = c('M','I','I','M')),
+  move.key.5 <- data.frame(keys = 1:5,
+                           fingers = c('M','I','T','I','M')),
+  move.key.6 <- data.frame(keys = 1:6,
+                           fingers = c('R','M','I','I','M','R')),
+  move.key.7 <- data.frame(keys = 1:7,
+                           fingers = c('R','M','I','T','I','M','R')),
+  move.key.8SP <- data.frame(keys = 1:8,
+                            fingers = c('P','R','M','I','T','I','M','R')),
+  move.key.8SY <- data.frame(keys = 1:8,
+                             fingers = c('R','M','I','T','T','I','M','R')),
+  move.key.9 <- data.frame(keys = 1:9,
+                           fingers = c('P','R','M','I','T','I','M','R','P'))
+)
