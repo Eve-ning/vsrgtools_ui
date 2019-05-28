@@ -49,10 +49,6 @@ chart.bcst <- f.diff.broadcast(chart.sim,
 
 require(ggdark) 
 
-chart.alpha$keys.move = paste(as.character(chart.alpha$keys.froms),
-                              as.character(chart.alpha$keys.tos),
-                              sep = '->')
-
 chart.alpha$bins <- (chart.alpha$offsets %/% 500) * 500
 chart.alpha.n <- subset(chart.alpha, chart.alpha$keys.froms == chart.alpha$keys.tos)
 chart.alpha.n <- 

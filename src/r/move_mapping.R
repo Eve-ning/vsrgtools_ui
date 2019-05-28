@@ -190,6 +190,10 @@ f.create.move.mapping <- function(keyset.select=NA,
   move.mapping %<>%
     f.merge(move.keyset) 
   
+  move.mapping$keys.moves = paste(as.character(move.mapping$keys.froms),
+                                  as.character(move.mapping$keys.tos),
+                                  sep = '->')
+  
   return(move.mapping)
 }
 
