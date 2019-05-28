@@ -120,7 +120,8 @@ f.create.move.mapping <- function(keyset.select=NA,
   }
   
   move.mapping <- f.load.mapping(mapping)
-  move.keyset <- f.load.keyset(keyset, keyset.select)
+  move.keyset <- f.load.keyset(keyset,
+                               as.character(keyset.select))
 
   # Merges both data.frames together
   f.merge <- function(mapping, keyset) {
