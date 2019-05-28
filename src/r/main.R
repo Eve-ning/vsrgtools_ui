@@ -60,13 +60,15 @@ chart.alpha.n <-
             data=chart.alpha.n,
             FUN=mean)
 
-ggplot(chart.alpha.n) +
+ggplot(subset(chart.alpha.n, chart.alpha.n$diffs < 1000)) +
   aes(x = bins,
       y = diffs) +
   geom_point() +
   geom_line() +
   dark_theme_minimal() +
-  ylim(0,1000)
+  ylim(0,1000) +
+  xlab('offsets') +
+  ggtitle("AiAe SHD Jack Speed Analysis")
 
 # Generate Broadcasted.
 ggplot(chart.bcst.k.d) +
