@@ -12,7 +12,7 @@ source("src/r/diff_broadcast.R")
 source("src/r/move_mapping.R")
 source("src/r/alpha_calc.R")
 
-chart <- f.chart.parse("src/osu/tldbms.osu")
+chart <- f.chart.parse('src/osu/aiae.osu')
 # chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
 
 { # Simulate
@@ -39,7 +39,7 @@ chart.bcst <- f.diff.broadcast(chart.sim,
                                ignore.types = c('lnotel'))
 
 { # Get Alpha
-  move.mapping <- f.create.move.mapping(keyset.select = '7R')
+  move.mapping <- f.create.move.mapping(keyset.select = '4')
 
   f.alpha <- function(diffs, moves){
     return(moves * (1/diffs))
@@ -47,15 +47,26 @@ chart.bcst <- f.diff.broadcast(chart.sim,
   chart.alpha <- f.alpha.calc(chart.bcst, move.mapping, f.alpha)
 }
 
-
 require(ggdark) 
 
-ggplot(chart.alpha) +
-  aes(x = offsets,
-      y = alpha) +
-  geom_point(aes(group = moves,
-                 color = moves)) +
-  dark_theme_minimal() 
+chart.alpha$keys.move = paste(as.character(chart.alpha$keys.froms),
+                              as.character(chart.alpha$keys.tos),
+                              sep = '->')
+
+chart.alpha$bins <- (chart.alpha$offsets %/% 500) * 500
+chart.alpha.n <- subset(chart.alpha, chart.alpha$keys.froms == chart.alpha$keys.tos)
+chart.alpha.n <- 
+  aggregate(diffs ~ bins,
+            data=chart.alpha.n,
+            FUN=mean)
+
+ggplot(chart.alpha.n) +
+  aes(x = bins,
+      y = diffs) +
+  geom_point() +
+  geom_line() +
+  dark_theme_minimal() +
+  ylim(0,1000)
 
 # Generate Broadcasted.
 ggplot(chart.bcst.k.d) +
