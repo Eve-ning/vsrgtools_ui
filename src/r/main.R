@@ -12,8 +12,9 @@ source("src/r/diff_broadcast.R")
 source("src/r/move_mapping.R")
 source("src/r/alpha_calc.R")
 
-chart <- f.chart.parse("src/osu/tldne.osu")
+chart <- f.chart.parse("src/osu/tldbms.osu")
 # chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
+
 { # Simulate
 f.decay <- function(stress, duration){
   return(stress / 1.5 ** (duration / 10000))
@@ -37,18 +38,24 @@ chart.sim <- f.stress.sim(chart = chart,
 chart.bcst <- f.diff.broadcast(chart.sim,
                                ignore.types = c('lnotel'))
 
-
 { # Get Alpha
-  move.mapping <- f.create.move.mapping(keyset.select = '7')
+  move.mapping <- f.create.move.mapping(keyset.select = '7R')
 
   f.alpha <- function(diffs, moves){
-    return(diffs * 1/moves)
+    return(moves * (1/diffs))
   }
-  f.alpha.calc(chart.bcst, move.mapping, f.alpha)
+  chart.alpha <- f.alpha.calc(chart.bcst, move.mapping, f.alpha)
 }
 
 
 require(ggdark) 
+
+ggplot(chart.alpha) +
+  aes(x = offsets,
+      y = alpha) +
+  geom_point(aes(group = moves,
+                 color = moves)) +
+  dark_theme_minimal() 
 
 # Generate Broadcasted.
 ggplot(chart.bcst.k.d) +
