@@ -9,8 +9,10 @@ source("src/r/chart_parser.R")
 source("src/r/stress_sim.R")
 source("src/r/replay_parser.R")
 source("src/r/diff_broadcast.R")
+source("src/r/move_mapping.R")
+source("src/r/alpha_calc.R")
 
-chart <- f.chart.parse("src/osu/world_frag.osu")
+chart <- f.chart.parse("src/osu/tldne.osu")
 # chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
 { # Simulate
 f.decay <- function(stress, duration){
@@ -36,6 +38,14 @@ chart.bcst <- f.diff.broadcast(chart.sim,
                                ignore.types = c('lnotel'))
 
 
+{ # Get Alpha
+  move.mapping <- f.create.move.mapping(keyset.select = '7')
+
+  f.alpha <- function(diffs, moves){
+    return(diffs * 1/moves)
+  }
+  f.alpha.calc(chart.bcst, move.mapping, f.alpha)
+}
 
 
 require(ggdark) 

@@ -86,7 +86,7 @@ f.diff.broadcast <- function(chart,
          value.name = 'diffs',
          na.rm = T)
   
-  chart$diff.types %<>%
+  chart$keys.tos %<>%
     regmatches(regexpr("[[:digit:]]+", .)) %>% 
     as.numeric()
   
