@@ -1,39 +1,3 @@
-#' ! This is a user-defined file 
-#'We will probably port this towards a RShiny UI
-#'
-#'Broadcast Table
-#'The broadcast table aims to do an INNER JOIN with
-#'the current broadcasted data.frame.
-#'
-#'It will be joined on 'keys' and 'diff.types'
-#'keys : <x>
-#'diff.types: X<x>.diff
-
-#'Instead of defining every combination, we will only look
-#'at the fingering, all left hand movements are reflected
-#'onto the right hand for fairness.
-#'
-#'Hence, 1 -> 2 = 7 -> 6 for 7K
-#'
-#'With this, we just need to define 25 combinations, less 
-#'if some combinations aren't used.
-#'
-#'Fingers are denoted as
-#'P|inky
-#'R|ing
-#'M|iddle
-#'I|ndex
-#'T|humb
-#'
-#'So the parameter denoting Pinky to Ring would be move.p.r
-#'
-#'Function evaluated would be:
-#'move.f <- function(diff, move) {
-#'    ...
-#'    return(val)
-#'}
-
-
 f.create.move.mapping <- function(keyset.select=NA,
                                   keyset=NA,
                                   mapping=NA){
