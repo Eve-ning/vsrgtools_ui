@@ -81,7 +81,6 @@ f.create.move.mapping <- function(keyset.select=NA,
                            I2 = c(rep(0,5)),
                            T2 = c(rep(0,5)))
     
-    
     # If not defined, we will load default
     if (is.na(mapping)){
       fngr[] = c(
