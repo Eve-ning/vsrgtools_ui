@@ -71,7 +71,7 @@ f.diff.broadcast <- function(chart,
   # We will convert it into a long table
   # Melt by original keys
   chart %<>% 
-    melt(measure.vars = 2:8,
+    melt(measure.vars = 2:(keys+1),
          variable.name = 'keys.froms',
          value.name = 'types',
          na.rm = T)
@@ -81,7 +81,7 @@ f.diff.broadcast <- function(chart,
   
   # Melt by diffs
   chart %<>% 
-    melt(measure.vars = 2:8,
+    melt(measure.vars = 2:(keys+1),
          variable.name = 'keys.tos',
          value.name = 'diffs',
          na.rm = T)
@@ -89,6 +89,8 @@ f.diff.broadcast <- function(chart,
   chart$keys.tos %<>%
     regmatches(regexpr("[[:digit:]]+", .)) %>% 
     as.numeric()
+  
+  chart <- subset(chart, chart$diffs > 0)
   
   return(chart)
 }
