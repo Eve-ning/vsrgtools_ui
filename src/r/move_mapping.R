@@ -112,14 +112,14 @@ f.create.move.mapping <- function(keyset.select=NA,
     
     fngr %<>% 
       melt(variable.name = 'tos',
-           value.name = 'moves')
+           value.name = 'moves.values')
     fngr.opp %<>% 
       melt(variable.name = 'tos',
-           value.name = 'moves')
+           value.name = 'moves.values')
   
     # FROM 1 TO 2 to 2 TO 1
     fngr.opp.s <- fngr.opp
-    colnames(fngr.opp.s) <- c('tos', 'froms', 'moves')
+    colnames(fngr.opp.s) <- c('tos', 'froms', 'moves.values')
     
     # FROM 1 TO 1 to 2 TO 2
     fngr.s <- fngr
@@ -191,10 +191,6 @@ f.create.move.mapping <- function(keyset.select=NA,
   
   move.mapping %<>%
     f.merge(move.keyset) 
-  
-  move.mapping$keys.moves = paste(as.character(move.mapping$keys.froms),
-                                  as.character(move.mapping$keys.tos),
-                                  sep = '->')
   
   return(move.mapping)
 }
