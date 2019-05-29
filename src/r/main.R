@@ -37,6 +37,7 @@ chart.sim <- f.stress.sim(chart = chart,
                           df.mapping = stress.mapping,
                           stress.init = 0)
 
+# Stress is lost here
 # broadcast on diff
 chart.bcst <- f.diff.broadcast(chart.sim,
                                ignore.types = c('lnotel'))
@@ -64,32 +65,3 @@ ggplot(chart.alpha.n) +
   ylim(0,250) +
   xlab('offsets') +
   facet_wrap(~keys.moves,ncol=4)
-
-# Generate Broadcasted.
-ggplot(chart.bcst.k.d) +
-  aes(x=offsets,
-      y=diffs) +
-  geom_bar(stat = 'identity',
-           aes(group=diff.types,
-               color=diff.types),
-           show.legend = F) +
-  dark_theme_minimal() +
-  facet_wrap(~keys, ncol=2)
-
-
-ggplot(chart.sim) +
-  aes(x = offsets,
-      y = stress) +
-  geom_line(aes(group = keys,
-                color = keys),
-            size = 1
-            ) +
-  geom_smooth(aes(group = keys,
-                  color = keys),
-              size = 0.4,
-              se = F
-  ) + 
-  ggtitle(label = "World Fragments",
-          subtitle = "Simulated Stress by Density") +
-  dark_theme_gray()
-
