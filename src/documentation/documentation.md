@@ -154,8 +154,25 @@ There are 2 maps required in this operation:
 - Move Mapping
 - Move Keyset
 
-#### Move Mapping
+#### Move Keyset
 Move Keyset converts **column** *(numerics)* to **moves** (characters).
+
+A default **4 Key** keyset looks like this.
+
+**4K**
+|keys|fingers|
+|-|-|
+|1|M1|
+|2|I1|
+|3|I2|
+|4|M2|
+
+*The fingers column will make more sense in the following section.*
+
+This can be user-specified or loaded from the defaults provided.
+
+#### Move Mapping
+Move Mapping maps fingers to **Move Values**
 
 The **default** template maps looks like this.
 
@@ -195,6 +212,7 @@ As you may expect, the initials are the finger names.
 
 This is for patterns that occur between hands.
 
+Both mapping can be fully user-specified.
 
 ## Chart Alpha
 **alpha** is an template variable, it is dependent on how it
