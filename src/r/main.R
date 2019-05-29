@@ -12,40 +12,38 @@ source("src/r/diff_broadcast.R")
 source("src/r/move_mapping.R")
 source("src/r/alpha_calc.R")
 
-chart <- f.chart.parse('src/osu/aiae.osu')
 # chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
 
-{ # Simulate
-f.decay <- function(stress, duration){
+f.stress.decay <- function(stress, duration){
   return(stress / 1.5 ** (duration / 10000))
 }
-f.spike <- function(stress, args){
+f.stress.spike <- function(stress, args){
   return((stress + args$adds) / args$mults)
 }
-df.mapping <-
+f.alpha <- function(diffs, moves.values){
+  return(moves.values * (1/diffs))
+}
+stress.mapping <-
   data.frame(types = c("note", "lnoteh", "lnotel"),
              adds  = c(50, 50, 20),
              mults = c(1,1,1))
+chart.path <- 'src/osu/aiae.osu'
+keyset.select <- '4'
 
+chart <- f.chart.parse(chart.path)
 chart.sim <- f.stress.sim(chart = chart,
-                          f.spike = f.spike,
-                          f.decay = f.decay,
-                          df.mapping = df.mapping,
+                          f.spike = f.stress.spike,
+                          f.decay = f.stress.decay,
+                          df.mapping = stress.mapping,
                           stress.init = 0)
-}
 
 # broadcast on diff
 chart.bcst <- f.diff.broadcast(chart.sim,
                                ignore.types = c('lnotel'))
 
-{ # Get Alpha
-  move.mapping <- f.create.move.mapping(keyset.select = '4')
+move.mapping <- f.create.move.mapping(keyset.select)
+chart.alpha <- f.alpha.calc(chart.bcst, move.mapping, f.alpha)
 
-  f.alpha <- function(diffs, moves){
-    return(moves * (1/diffs))
-  }
-  chart.alpha <- f.alpha.calc(chart.bcst, move.mapping, f.alpha)
-}
 
 require(ggdark) 
 
