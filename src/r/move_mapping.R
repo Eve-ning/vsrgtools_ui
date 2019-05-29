@@ -183,7 +183,9 @@ f.create.move.mapping <- function(keyset.select=NA,
             by.y = 'fingers')
     colnames(mapping)[ncol(mapping)] <- "keys.tos"
     
-    mapping <- mapping[3:5] # Return only the required columns.
+    # We will return all due to move naming, which is easier
+    # to work with with finger chars
+    # mapping <- mapping[3:5] # Return only the required columns.
     return(mapping)
   }
   
