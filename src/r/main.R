@@ -47,22 +47,23 @@ chart.alpha <- f.alpha.calc(chart.bcst, move.mapping, f.alpha)
 
 require(ggdark) 
 
-chart.alpha$bins <- (chart.alpha$offsets %/% 500) * 500
-chart.alpha.n <- subset(chart.alpha, chart.alpha$keys.froms == chart.alpha$keys.tos)
+chart.alpha$bins <- (chart.alpha$offsets %/% 1000) * 1000
+chart.alpha$keys.moves <- paste(as.character(chart.alpha$keys.froms),
+                                as.character(chart.alpha$keys.tos),
+                                sep = "->")
 chart.alpha.n <- 
-  aggregate(diffs ~ bins,
-            data=chart.alpha.n,
-            FUN=mean)
+  aggregate(diffs ~ bins + keys.moves,
+            data=chart.alpha,
+            FUN=min)
 
-ggplot(subset(chart.alpha.n, chart.alpha.n$diffs < 1000)) +
+ggplot(chart.alpha.n) +
   aes(x = bins,
       y = diffs) +
-  geom_point() +
-  geom_line() +
+  geom_point(size=0.7) +
   dark_theme_minimal() +
-  ylim(0,1000) +
+  ylim(0,250) +
   xlab('offsets') +
-  ggtitle("AiAe SHD Jack Speed Analysis")
+  facet_wrap(~keys.moves,ncol=4)
 
 # Generate Broadcasted.
 ggplot(chart.bcst.k.d) +

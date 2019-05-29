@@ -187,6 +187,3 @@ f.create.move.mapping <- function(keyset.select=NA,
   
   return(move.mapping)
 }
-
-
-f <- 
