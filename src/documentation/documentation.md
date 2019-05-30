@@ -20,12 +20,16 @@ Breaks down VSRG charts so that data analysis can be performed on it.
 Currently there are a few steps that are supported
 
 ## Chart Parser
+`f.chart.parse(path)`
+
 This loads in a VSRG Chart format.
 
 Formats supported:
 - `.osu`
 
 ## Chart Simulator
+`f.chart.sim(chart, f.spike, f.decay, df.mapping, stress.init)`
+
 There are two parts to the simulation. **Tracking** and **Mapping**
 
 ### Tracking
@@ -106,6 +110,8 @@ decay <- function(stress, duration) {
 |lnotel|`5.0` |`1.05` |
 
 ## Chart Difference Broadcaster
+`f.chart.bcst(chart, ignore.types)`
+
 This finds the difference in offset between an **object** and
 all of the **immediate following objects** on **all columns**.
 
@@ -138,6 +144,8 @@ calculation. Users can specify other types via the
 `ignore.types` argument.
 
 ## Move Mapping Creation
+`f.create.move.mapping(keyset.select, keyset, mapping, mapping.opp)`
+
 To expand upon the broadcasted data, a helper function for a
 **Move Map** creation is used.
 
@@ -215,10 +223,11 @@ This is for patterns that occur between hands.
 Both mapping can be fully user-specified.
 
 ## Chart Alpha
+`f.alpha.calc(chart, mapping, f.alpha)`
+
 **alpha** is an template variable, it is dependent on how it
 is calculated.
 
-This is a basic calculation wrapper. It takes a **Move Mapping**
-generated **move.value** parameter and the **diff** to calculate
-**alpha**
+This is a basic calculation wrapper. It takes the **Move Value**
+parameter and the **diff** to calculate **alpha**
 
