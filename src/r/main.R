@@ -12,11 +12,11 @@ source("src/r/diff_broadcast.R")
 source("src/r/move_mapping.R")
 source("src/r/alpha_calc.R")
 
-# chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
+chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
   
 # Chart Parser
 {
-chart.path <- 'src/osu/aiae.osu'
+chart.path <- 'src/osu/tldne.osu'
 chart <- f.chart.parse(chart.path)
 }
 
@@ -42,4 +42,12 @@ chart <- f.chart.parse(chart.path)
 # Difference Broadcasting
 chart.bcst <- f.diff.broadcast(chart,
                                ignore.types = c('lnotel'))
+
+keyset.select <- '4'
+f.alpha <- function(diffs, moves.values){
+  return(moves.values * (1/diffs ** 2))
+}
+chart.alpha <- f.alpha.calc(chart.bcst,
+                            f.create.move.mapping(keyset.select),
+                            f.alpha)
 
