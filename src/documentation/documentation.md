@@ -76,6 +76,7 @@ This is a user specified table on parameters **Tracking** will be
 using.
 
 The format that is required, `arg1` and `arg2` are optional.
+
 |types |`<arg1>`|`<arg2>`|...|
 |------|--------|--------|---|
 |note  |`x`     |`a`     |...|
@@ -103,6 +104,7 @@ decay <- function(stress, duration) {
 ```
 
 **Mapping Table**
+
 |types |`adds`|`mults`|
 |------|------|-------|
 |note  |`15.0`|`1.1`  |
@@ -168,6 +170,7 @@ Move Keyset converts **column** *(numerics)* to **moves** (characters).
 A default **4 Key** keyset looks like this.
 
 **4K**
+
 |keys|fingers|
 |-|-|
 |1|M1|
