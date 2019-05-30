@@ -17,8 +17,6 @@ f.replay.parse <- function(map, replay.path){
   
   f.similarity.match <- function(map, replay){
     #' Does a similarity match between map and replay
-    map <- chart
-    replay <- read_feather("src/feather/replay/3155787_tldne.feather")
     "Map should only come in keys, we will need to 
     transform it into actions, which will help in
     pairing"
