@@ -13,9 +13,9 @@ f.alpha.calc <- function(chart, mapping, f.alpha){
   #' with (diffs, moves.values) respectively
   
   chart <- merge(chart, mapping, by = c('keys.froms', 'keys.tos'))
-  chart$alpha <- f.alpha(diffs = chart$diffs,
-                         moves.values = chart$moves.values)
-  chart$alpha[chart$alpha < 0] <- 0 
+  chart$alphas <- f.alpha(diffs = chart$diffs,
+                          moves.values = chart$moves.values)
+  chart$alphas[chart$alphas < 0] <- 0 
   
   return(chart)
 } 
