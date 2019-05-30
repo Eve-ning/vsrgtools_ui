@@ -13,14 +13,12 @@ source("src/r/move_mapping.R")
 source("src/r/alpha_calc.R")
 
 # chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather")
-
-
-
-
+  
+# Chart Parser
+{
 chart.path <- 'src/osu/aiae.osu'
-
-
 chart <- f.chart.parse(chart.path)
+}
 
 # Stress Simulation
 {
@@ -45,33 +43,3 @@ chart <- f.chart.parse(chart.path)
 chart.bcst <- f.diff.broadcast(chart,
                                ignore.types = c('lnotel'))
 
-# Alpha Calculation
-{
-keyset.select <- '4'
-f.alpha <- function(diffs, moves.values){
-  return(moves.values * (1/diffs ** 2))
-}
-chart.alpha <- f.alpha.calc(chart.bcst,
-                            f.create.move.mapping(keyset.select),
-                            f.alpha)
-}
-
-require(ggdark) 
-
-chart.alpha$bins <- (chart.alpha$offsets %/% 1000) * 1000
-chart.alpha$keys.moves <- paste(as.character(chart.alpha$keys.froms),
-                                as.character(chart.alpha$keys.tos),
-                                sep = "->")
-chart.alpha.n <- 
-  aggregate(diffs ~ bins + keys.moves,
-            data=chart.alpha,
-            FUN=min)
-
-ggplot(chart.alpha.n) +
-  aes(x = bins,
-      y = diffs) +
-  geom_point(size=0.7) +
-  dark_theme_minimal() +
-  ylim(0,250) +
-  xlab('offsets') +
-  facet_wrap(~keys.moves,ncol=4)
