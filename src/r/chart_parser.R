@@ -1,15 +1,25 @@
-f.chart.parse <- function(chart.path){
+f.chart.parse <- function(chart.path = NA,
+                          chart.lines = NA){
   #' Parses the chart into a data.frame
   #' 
   #' Only .osu formats are supported for now.
   #' 
   #' @param chart.path Path of the chart to be parsed
+  #' @param chart.lines Lines of the chart to be parsed, if the chart
+  #' is not in a file format
   #' @return A data.frame consisting of the note's data only.
   #' Columns: keys, types, offsets
   
-  chart.f = file(chart.path, open='r')
-  chart = readLines(chart.f)
-  
+  if (and(is.na(chart.path), is.na(chart.lines))) {
+    stop("Both Arguments cannot be NA")
+  } else if (is.na(chart.path)) {
+    chart <- chart.lines
+  } else {
+    chart.f <- file(chart.path, open='r')
+    chart <- readLines(chart.f)
+    close(chart.f)
+  }
+
   f.chart.parse.osu <- function(chart) {
     #' Parses the osu chart into a data.frame
     #' 
