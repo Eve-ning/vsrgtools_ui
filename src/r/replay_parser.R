@@ -45,9 +45,9 @@ f.replay.parse <- function(chart, replay.path, ignore.threshold = 100){
 
         chart.ac[row, 'replay.offsets'] <- replay.match$offsets
       }
-      chart.ac.list <- append(chart.ac.list, list(chart.ac))
+      chart.ac.split[[as.character(i)]] <- chart.ac
     }
-    return(bind_rows(chart.ac.list))
+    return(bind_rows(chart.ac.split))
   }
   
   replay <- read_feather(replay.path)

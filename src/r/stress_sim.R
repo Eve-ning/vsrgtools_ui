@@ -70,7 +70,6 @@ f.stress.sim <- function(chart,
   
   # We will be looping through the chart by key
   chart.k.split <- split(x = chart, f = chart$keys)
-  chart.k.list <- c()
   for (key in 1:length(chart.k.split)){
     stress = 0
     offset.old = 0
@@ -102,8 +101,9 @@ f.stress.sim <- function(chart,
         chart.k[row, "stress.spike"] <- stress
         
         # Update new offset
-        offset.old <- chart.k[row, "offsets"]
-      } else {
+        offset.old <- offset.new
+      }
+      else {
         # Current offset
         offset.new <- as.numeric(chart.k[row, "offsets"])
         
@@ -119,11 +119,11 @@ f.stress.sim <- function(chart,
       }
     }
     
-    chart.k.list <- append(chart.k.list, list(chart.k))
+    chart.k.split[[key]] <- chart.k
   }
   
   # Join charts of different keys into one
-  chart <- bind_rows(chart.k.list)
+  chart <- bind_rows(chart.k.split)
   chart %<>%
     mutate(stress = pmax(stress.spike, stress.decay, na.rm = T))
   return(chart)
