@@ -22,9 +22,9 @@ f.replay.parse <- function(chart, replay.path, ignore.threshold = 100){
     "chart should only come in keys, we will need to 
     transform it into actions, which will help in
     pairing"
-    chart$actions <- chart$keys
-    chart$actions[chart$types == 'lnotel'] <- -chart$actions[chart$types == 'lnotel']
-    chart$replay.offsets <- NA
+    chart %<>%
+      mutate(actions = ifelse(types == 'lnotel', -keys, keys),
+             replay.offsets = NA)
     actions.unq <- unique(chart$actions)
     
     chart.ac.split <- split(chart, f=chart$actions)
@@ -51,9 +51,10 @@ f.replay.parse <- function(chart, replay.path, ignore.threshold = 100){
   }
   
   replay <- read_feather(replay.path)
-  chart <- f.similarity.match(chart, replay)
+  chart %<>%  f.similarity.match(replay)
+  chart %<>% 
+    mutate(devs = abs(offsets - replay.offsets)) %>% 
+    filter(devs < ignore.threshold)
   
-  chart$devs <- abs(chart$offsets - chart$replay.offsets)
-  chart.rep <- subset(chart.rep, chart.rep$devs < ignore.threshold)
   return(chart)
 }
