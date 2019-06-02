@@ -15,19 +15,19 @@ f.diff.broadcast <- function(chart,
   require(dplyr)
   
   # Drop NA rows
-  chart <- subset(chart, !is.na(chart$types))
+  chart %<>%
+    filter(!is.na(types)) %>% 
   
   # Ignores any types that matches the list
-  chart$types[chart$types %in% ignore.types] <- NA
+    mutate(types = ifelse(types %in% ignore.types, NA, types)) %>%
   
   # Cast keys to longer table.
-  chart %<>% 
-    dcast(offsets ~ keys, value.var = 'types')
+    dcast(offsets ~ keys, value.var = 'types') %>% 
   
   # The plan is to flip the chart up-side down, then 
   # we track different columns on the accumulated
   # offsets.
-  chart <- chart[order(chart$offsets,decreasing = T),]
+    arrange(desc(offsets))
 
   # Grabs the number of keys in the chart
   keys <- ncol(chart) - 1
@@ -65,10 +65,6 @@ f.diff.broadcast <- function(chart,
     offset.old <- offset
   }
   
-  # This changes all negative numbers to -1
-  # It is the result of checking diffs before a note happens
-  chart[chart < 0] <- -1
-  
   # We will convert it into a long table
   # Melt by original keys
   chart %<>% 
@@ -91,7 +87,8 @@ f.diff.broadcast <- function(chart,
     regmatches(regexpr("[[:digit:]]+", .)) %>% 
     as.numeric()
   
-  chart <- subset(chart, chart$diffs > 0)
+  chart %<>%
+    filter(diffs > 0)
   
   return(chart)
 }
