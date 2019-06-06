@@ -16,7 +16,7 @@ source("src/r/alpha_calc.R")
 microbenchmark(
   "al" = {
   # Chart Parser
-    chart.path <- 'src/osu/tldne.osu'
+    chart.path <- 'src/osu/princbride.osu'
     chart <- f.chart.parse(chart.path)
   
   # Replay Parser
@@ -27,7 +27,7 @@ microbenchmark(
   
   # Stress Simulation
     f.stress.decay <- function(stress, duration){
-      return(stress / 1.5 ** (duration / 10000))
+      return(stress / 1.5 ** (duration / 1000))
     }
     f.stress.spike <- function(stress, args){
       return((stress + args$adds) / args$mults)
@@ -55,8 +55,19 @@ microbenchmark(
                                 f.create.move.mapping(keyset.select),
                                 f.alpha)
   }
-, times = 2
+, times = 1
 )
+
+'require(ggdark)
+ggplot(chart.sim) +
+  aes(offsets,
+      stress,
+      group = keys) +
+  geom_area(aes(fill = factor(keys))) +
+  facet_wrap(. ~ keys, ncol = 1) +
+  ggtitle("KOTOKO - Princess Bride!",
+          "Stress Simulation") +
+  dark_theme_gray()'
 
 
 
