@@ -2,13 +2,18 @@
 using namespace Rcpp;
 
 // Simulates the chart on CPP rather than R
-// Types Accepted:
-// Pad, Spike, Decay
-
-// Note that separate keys should be passed in different instances
-// Can probably add a wrapper function to handle that
-// V1: Stress Value before Spike (Including Decay)
-// V2: Stress Value after Spike (Excluding Decay)
+// Input
+  // Note that the first 2 arguments must match in length
+  // offsets: Offsets in a vector
+  // is_spikes: Logical Vector indicating if it's a spike
+  // args_list: A List indicating different arguments for
+  //  spike vs. decay
+  // spike & decay_func: Spike and Decay Functions, the 
+  //  arguments must match those provided in args_list
+  // stress: The value to initialize stress with
+// Output
+  // A list containing stress_base and stress_spike, 
+  //  accessible via "base" & "spike" names
 List simulate_key(NumericVector offsets,
                   LogicalVector is_spikes,
                   List args_list,
