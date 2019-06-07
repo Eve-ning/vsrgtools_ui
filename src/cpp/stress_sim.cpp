@@ -14,12 +14,12 @@ using namespace Rcpp;
 // Output
   // A list containing stress_base and stress_spike, 
   //  accessible via "base" & "spike" names
-List simulate_key(NumericVector offsets,
-                  LogicalVector is_spikes,
-                  List args_list,
-                  Function spike_func,
-                  Function decay_func,
-                  double stress = 0.0) {
+DataFrame simulate_key(NumericVector offsets,
+                       LogicalVector is_spikes,
+                       List args_list,
+                       Function spike_func,
+                       Function decay_func,
+                       double stress = 0.0) {
   
   unsigned int rows = offsets.length();
   
@@ -65,10 +65,12 @@ List simulate_key(NumericVector offsets,
     offset_buffer = offset;
   }
   
-  List stress_list = List::create(
-    _["base"] = stress_base,
-    _["spike"] = stress_spike
+  DataFrame stress_df = DataFrame::create(
+    _["offsets"] = clone(offsets),
+    _["is_spikes"] = clone(is_spikes),
+    _["stress"] = clone(stress_base),
+    _["stress_spikes"] = clone(stress_spike)
   );
   
-  return stress_list;
+  return stress_df;
 }
