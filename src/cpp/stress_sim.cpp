@@ -14,8 +14,10 @@ using namespace Rcpp;
 // Output
   // A list containing stress_base and stress_spike, 
   //  accessible via "base" & "spike" names
+// [[Rcpp::export]]
+
 DataFrame simulate_key(NumericVector offsets,
-                       LogicalVector is_spikes,
+                       CharacterVector types,
                        List args_list,
                        Function spike_func,
                        Function decay_func,
@@ -24,7 +26,7 @@ DataFrame simulate_key(NumericVector offsets,
   unsigned int rows = offsets.length();
   
   // Assert length
-  assert((is_spikes.length() == rows,
+  assert((types.length() == rows,
           "Both vectors must be equal in length."));
   
   // Initialize with -1 as default
@@ -34,12 +36,12 @@ DataFrame simulate_key(NumericVector offsets,
   double offset_buffer = 0.0;
   double offset = 0.0;
   double duration = 0.0;
-  bool is_spike = false;
+  std::string type = "";
   
   for (unsigned int row; row < rows; row ++) {
     // Get all the required parameters
     offset = offsets[row];
-    is_spike = is_spikes[row];
+    type = types[row];
     duration = offset - offset_buffer; 
     
     // If spike, we will calculate via decay then spike_func
@@ -48,17 +50,15 @@ DataFrame simulate_key(NumericVector offsets,
     
     // This conditional is reversed since non-spikes are more
     // common
-    if (!is_spike){
+    if (type == "NA") {
       stress_base[row] = as<double>(decay_func(_["stress"] = stress,
-                                               _["duration"] = duration,
-                                               _["args"] = args_list["decay"]));
+                                               _["duration"] = duration));
     } else {
       stress = as<double>(spike_func(_["stress"] = stress,
-                                     _["args"] = args_list["decay"]));
+                                     _["args"] = args_list[type]));
       stress_base[row] = stress;
       stress = as<double>(decay_func(_["stress"] = stress,
-                                     _["duration"] = duration,
-                                     _["args"] = args_list["spike"]));
+                                     _["duration"] = duration));
       stress_spike[row] = stress;
     }
 
@@ -67,7 +67,6 @@ DataFrame simulate_key(NumericVector offsets,
   
   DataFrame stress_df = DataFrame::create(
     _["offsets"] = clone(offsets),
-    _["is_spikes"] = clone(is_spikes),
     _["stress"] = clone(stress_base),
     _["stress_spikes"] = clone(stress_spike)
   );
