@@ -23,6 +23,10 @@ List simulate_key(NumericVector offsets,
   
   unsigned int rows = offsets.length();
   
+  // Assert length
+  assert((is_spikes.length() == rows,
+          "Both vectors must be equal in length."));
+  
   // Initialize with -1 as default
   NumericVector stress_base(rows, -1.0);
   NumericVector stress_spike(rows, -1.0);
