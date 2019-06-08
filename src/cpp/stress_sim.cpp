@@ -15,12 +15,13 @@ using namespace Rcpp;
   // A list containing stress_base and stress_spike, 
   //  accessible via "base" & "spike" names
 // [[Rcpp::export]]
+
 DataFrame simulate_key(NumericVector offsets,
                        CharacterVector types,
                        List args_list,
                        Function spike_func,
                        Function decay_func,
-                       double stress) {
+                       double stress = 0.0) {
   
   unsigned int rows = offsets.length();
   
@@ -29,8 +30,8 @@ DataFrame simulate_key(NumericVector offsets,
           "Both vectors must be equal in length."));
   
   // Initialize with -1 as default
-  NumericVector stress_base(rows, -1);
-  NumericVector stress_spike(rows, -1);
+  NumericVector stress_base(rows, -1.0);
+  NumericVector stress_spike(rows, -1.0);
   
   double offset_buffer = 0.0;
   double offset = 0.0;
@@ -71,30 +72,4 @@ DataFrame simulate_key(NumericVector offsets,
   );
   
   return stress_df;
-}
-
-List simulate(List offsets_list,
-              List types_list,
-              List args_list,
-              Function spike_func,
-              Function decay_func,
-              double stress = 0.0) {
-  
-  List stress_df_list;
-  unsigned int keys = offsets_list.length();
-  
-  for (unsigned int key; key < keys; key ++) {
-    stress_df_list.push_back(
-      simulate_key(offsets_list[key],
-                 types_list[key],
-                 args_list,
-                 spike_func,
-                 decay_func,
-                 stress)
-    );
-  }
-  
-  return stress_df_list;
-  
-  
 }
