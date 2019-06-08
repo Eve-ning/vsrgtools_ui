@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include "parameters.h"
 using namespace Rcpp;
 
 // Simulates the chart on CPP rather than R
@@ -18,10 +19,9 @@ using namespace Rcpp;
 
 DataFrame simulate_key(NumericVector offsets,
                        CharacterVector types,
-                       List args_list,
-                       Function spike_func,
-                       Function decay_func,
                        double stress = 0.0) {
+  
+  Params params;
   
   unsigned int rows = offsets.length();
   
@@ -51,14 +51,11 @@ DataFrame simulate_key(NumericVector offsets,
     // This conditional is reversed since non-spikes are more
     // common
     if (type == "NA") {
-      stress_base[row] = as<double>(decay_func(_["stress"] = stress,
-                                               _["duration"] = duration));
+      stress_base[row] = params.decay_func(stress, duration);
     } else {
-      stress = as<double>(spike_func(_["stress"] = stress,
-                                     _["args"] = args_list[type]));
+      stress = params.decay_func(stress, duration);
       stress_base[row] = stress;
-      stress = as<double>(decay_func(_["stress"] = stress,
-                                     _["duration"] = duration));
+      stress = params.spike_func(stress, type);
       stress_spike[row] = stress;
     }
 
