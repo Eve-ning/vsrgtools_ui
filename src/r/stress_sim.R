@@ -49,9 +49,6 @@ f.stress.sim <- function(chart,
   
   Rcpp::sourceCpp("src/cpp/stress_sim.cpp")
   
-  # Firstly, we join the mapping with the chart
-  chart %<>% merge(df.mapping, by='types')
-  
   # These are the column indexes of the custom arguments
   args.columns = 4:(ncol(chart))
   
@@ -73,30 +70,23 @@ f.stress.sim <- function(chart,
   # We will be looping through the chart by key
   chart.k.split <- split(x = chart, f = chart$keys)
   for (key in 1:length(chart.k.split)){
-    key = 1
     chart.k <- chart.k.split[[key]]
     chart.k %<>%
       merge(chart.frame, by='offsets', all=T) %>% 
       mutate(is.spike = !is.na(types))
     
-    simulate_key(
+    chart.k.split[[key]] <- simulate_key(
       chart.k$offsets,
       chart.k$types,
       args,
       f.stress.spike,
       f.stress.decay
     )
-    
-    chart.k %<>% mutate(keys = key)
-    
-    
-    chart.k.split[[key]] <- chart.k
+  
   }
   
   # Join charts of different keys into one
   chart <- bind_rows(chart.k.split)
-  chart %<>%
-    mutate(stress = pmax(stress.spike, stress.decay, na.rm = T))
   return(chart)
 }
 
