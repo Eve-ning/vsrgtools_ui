@@ -1,10 +1,9 @@
-library(ggplot2)
-library(feather)
-library(reshape2)
-library(zoo)
-library(dplyr)
-library(magrittr)
-library(microbenchmark)
+require(ggplot2)
+require(reshape2)
+require(zoo)
+require(dplyr)
+require(magrittr)
+require(microbenchmark)
 {
 source("src/r/chart_parser.R")
 source("src/r/stress_sim.R")
@@ -22,8 +21,6 @@ microbenchmark(
   # Replay Parser
     chart.rep <- f.replay.parse(chart, "src/feather/replay/3155787_tldne.feather",
                                 ignore.threshold = 100)
-    chart.rep %<>%
-      aggregate(devs ~ offsets, data = ., mean)
   
   # Stress Simulation
     chart.sim <- f.stress.sim(chart = chart,
