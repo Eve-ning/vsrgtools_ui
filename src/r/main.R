@@ -26,20 +26,7 @@ microbenchmark(
       aggregate(devs ~ offsets, data = ., mean)
   
   # Stress Simulation
-    f.stress.decay <- function(stress, duration){
-      return(stress / 1.5 ** (duration / 1000))
-    }
-    f.stress.spike <- function(stress, args){
-      return((stress + args$adds) / args$mults)
-    }
-    stress.mapping <-
-      data.frame(types = c("note", "lnoteh", "lnotel"),
-                 adds  = c(0.5, 0.5, 0.2),
-                 mults = c(1,1,1))
     chart.sim <- f.stress.sim(chart = chart,
-                              f.spike = f.stress.spike,
-                              f.decay = f.stress.decay,
-                              df.mapping = stress.mapping,
                               stress.init = 0)
   
   # Difference Broadcasting
