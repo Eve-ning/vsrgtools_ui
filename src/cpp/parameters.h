@@ -27,9 +27,13 @@ private:
   );
 
 public:
+  
+  double decay_choice(std::string choice = "basic");
   // Required: double stress, double duration only
   double decay_func(double stress,
-                    double duration);
+                    double duration,
+                    double alpha,
+                    double beta);
 
   // Required: double stress, with additional arguments
   double spike_func(double stress,

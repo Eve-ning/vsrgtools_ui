@@ -8,9 +8,11 @@ using namespace Rcpp;
 
 // Required: double stress, double duration only
 double Params::decay_func(double stress,
-                          double duration) {  
+                          double duration,
+                          double alpha,
+                          double beta) {  
   // This is defined directly
-  return stress / pow(1.5, (duration / 1000));
+  return stress / pow(alpha, (duration / beta));
 
 }
 
