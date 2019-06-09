@@ -39,5 +39,5 @@ microbenchmark(
                                 suppressMessages(f.create.move.mapping(keyset.select)),
                                 f.alpha)
   }
-, times = 5
+, times = 1
 )

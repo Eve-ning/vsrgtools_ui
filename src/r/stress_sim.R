@@ -30,10 +30,15 @@ f.stress.sim <- function(chart,
       merge(chart.frame, by='offsets', all=T) %>% 
       mutate(is.spike = !is.na(types))
     
-    chart.k.split[[key]] <- cpp_simulate_key(
+    chart.k.sim <- cpp_simulate_key(
       chart.k$offsets,
       chart.k$types
     )
+    
+    chart.k.sim %<>%
+      mutate(keys = key)
+    
+    chart.k.split[[key]] <- chart.k.sim
   
   }
   

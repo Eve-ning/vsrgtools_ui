@@ -16,10 +16,10 @@ private:
       _["note"] = 0.5,
       _["lnoteh"] = 0.5,
       _["lnotel"] = 0.2),
-      _["mults"] = NumericVector::create(
-        _["note"] = 1.0,
-        _["lnoteh"] = 1.0,
-        _["lnotel"] = 1.0)
+    _["mults"] = NumericVector::create(
+      _["note"] = 1.0,
+      _["lnoteh"] = 1.0,
+      _["lnotel"] = 1.0)
   // _["<name>"] = <vectorClass>(
   //   _["note"] = <param>,
   //   _["lnoteh"] = <param>,
