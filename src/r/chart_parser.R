@@ -10,6 +10,8 @@ f.chart.parse <- function(chart.path = NA,
   #' @return A data.frame consisting of the note's data only.
   #' Columns: keys, types, offsets
   
+  require(magrittr)
+  
   if (and(is.na(chart.path), is.na(chart.lines))) {
     stop("Both Arguments cannot be NA")
   } else if (is.na(chart.path)) {
@@ -28,10 +30,8 @@ f.chart.parse <- function(chart.path = NA,
     #' 
     require(dplyr)
     require(tidyr)
-    require(magrittr)
     require(stringr)
     require(reshape2)
-    require(docstring)
     
     f.extract <- function(chart) {
       cs.i <- pmatch('CircleSize:', chart)
