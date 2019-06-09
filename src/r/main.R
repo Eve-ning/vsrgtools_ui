@@ -9,7 +9,7 @@ source("src/r/chart_parser.R")
 source("src/r/stress_sim.R")
 source("src/r/replay_parser.R")
 source("src/r/diff_broadcast.R")
-source("src/r/move_mapping.R")
+source("src/r/create_move_mapping.R")
 source("src/r/alpha_calc.R")
 }
 microbenchmark(
@@ -41,36 +41,3 @@ microbenchmark(
   }
 , times = 5
 )
-
-'require(ggdark)
-ggplot(chart.sim) +
-  aes(offsets,
-      stress,
-      group = keys) +
-  geom_area(aes(fill = factor(keys))) +
-  facet_wrap(. ~ keys, ncol = 1) +
-  ggtitle("KOTOKO - Princess Bride!",
-          "Stress Simulation") +
-  dark_theme_gray()'
-
-
-
-chart.custom.stress <- chart.sim %>% 
-  aggregate(stress ~ offsets, data=., median)
-
-chart.custom.stress %<>%
-  merge(chart.rep, by = 'offsets')
-
-
-cor(chart.custom.stress$stress, chart.custom.stress$devs)
-
-ggplot(chart.custom.stress) +
-  aes(x = offsets,
-      y = stress) +
-  geom_point() +
-  geom_line(aes(y = devs), color="blue")
-
-ggplot(chart.alpha) +
-  aes(x=offsets,
-      y=alphas) +
-  geom_point()
