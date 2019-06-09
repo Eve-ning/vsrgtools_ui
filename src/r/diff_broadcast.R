@@ -35,21 +35,30 @@ f.diff.broadcast <- function(chart,
   # offsets. 
     arrange(desc(offsets))
     
-  reset.m <- as.matrix(chart.bcst[,2:ncol(chart.bcst)])
-  keys <- ncol(reset.m)
+  keys <- ncol(chart.bcst) - 1
   
-  # Broadcast with cpp and assign to the [2:] columns
-  chart.bcst[,2:ncol(chart.bcst)] <- cpp_broadcast(chart.bcst$offsets, reset.m)
+  # Broadcast with cpp and assign back to the [2:] columns
+  chart.bcst[,2:ncol(chart.bcst)] <-
+    cpp_broadcast(chart.bcst$offsets,
+                  as.matrix(chart.bcst[,2:ncol(chart.bcst)]))
 
-  chart.bcst %<>% merge(chart, by = 'offsets')
-  
-  chart.bcst %<>% 
+  chart.bcst %<>%
+    # Merge to get back original type data
+    merge(chart, by = 'offsets') %>% 
+    
+    # Melt bcst columns to diffs
     melt(measure.vars = 2:(keys+1),
          variable.name = 'keys.tos',
          value.name = 'diffs',
          na.rm = T) %>%
-    rename(keys.froms = keys) %>% 
+    
+    # Rename for clarity
+    rename(keys.froms = keys) %>%
+    
+    # Coerce to numeric
     mutate(keys.tos = as.numeric(keys.tos)) %>%
+    
+    # Remove invalid diffs
     filter(diffs > 0)
   
   return(chart.bcst)
