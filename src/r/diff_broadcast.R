@@ -17,79 +17,40 @@ f.diff.broadcast <- function(chart,
   Rcpp::sourceCpp("src/cpp/diff_broadcast.cpp")
   
   # Drop NA rows
-  chart %<>%
+  chart.bcst <- chart %>%
   
   # Ignores any types that matches the list
     filter(!(types %in% ignore.types)) %>%
+    
+    # As per the cpp function's requirements, the types
+    # that we would want to participate is TRUE, while
+    # the spectators are FALSE
+    mutate(types = T) %>% 
   
   # Cast keys to longer table.
-    dcast(offsets ~ keys, value.var = 'types') %>% 
+    dcast(offsets ~ keys, value.var = 'types', fill = F) %>% 
   
   # The plan is to flip the chart up-side down, then 
   # we track different columns on the accumulated
-  # offsets.
+  # offsets. 
     arrange(desc(offsets))
+    
+  reset.m <- as.matrix(chart.bcst[,2:ncol(chart.bcst)])
+  keys <- ncol(reset.m)
+  
+  # Broadcast with cpp and assign to the [2:] columns
+  chart.bcst[,2:ncol(chart.bcst)] <- cpp_broadcast(chart.bcst$offsets, reset.m)
 
-  # Grabs the number of keys in the chart
-  keys <- ncol(chart) - 1
+  chart.bcst %<>% merge(chart, by = 'offsets')
   
-  # Diff trackers are variable that tracks all columns
-  diff.trackers <- vector(mode = "numeric",
-                          length = keys)
-  
-  # Append extra columns
-  diff.columns <- data.frame(matrix(ncol=keys))
-  diff.columns %<>% rename_all(paste0, ".diff")
-  chart %<>% cbind(diff.columns)
-  
-  # This is the column to reference from
-  col <- 2 
-  offset.old <- 0
-  for (row in 1:nrow(chart)){ 
-    # Grab current row offset
-    offset <- chart[row, 'offsets']
-    
-    diff.offset <- offset.old - offset
-    diff.trackers <- diff.trackers + diff.offset
-    
-    # Assign current diffs
-    chart[row, (col+keys):(col+2*keys-1)] <- diff.trackers
-    
-    # Reset Mask is to reset the difference once a note is
-    # encountered
-    reset.mask <- apply(chart[row, col:(col+keys-1)],
-                        2, 
-                        FUN=is.na)
-    diff.trackers[!reset.mask] <- 0
-    
-    # Assign old offset
-    offset.old <- offset
-  }
-  
-  # We will convert it into a long table
-  # Melt by original keys
-  chart %<>% 
-    melt(measure.vars = 2:(keys+1),
-         variable.name = 'keys.froms',
-         value.name = 'types',
-         na.rm = T)
-  
-  chart$keys %<>%
-    as.numeric()
-  
-  # Melt by diffs
-  chart %<>% 
+  chart.bcst %<>% 
     melt(measure.vars = 2:(keys+1),
          variable.name = 'keys.tos',
          value.name = 'diffs',
-         na.rm = T)
-  
-  chart$keys.tos %<>%
-    regmatches(regexpr("[[:digit:]]+", .)) %>% 
-    as.numeric()
-  
-  chart %<>%
+         na.rm = T) %>%
+    rename(keys.froms = keys) %>% 
+    mutate(keys.tos = as.numeric(keys.tos)) %>%
     filter(diffs > 0)
   
-  return(chart)
+  return(chart.bcst)
 }
