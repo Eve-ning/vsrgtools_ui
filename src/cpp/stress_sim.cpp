@@ -17,9 +17,9 @@ using namespace Rcpp;
   //  accessible via "base" & "spike" names
 // [[Rcpp::export]]
 
-DataFrame simulate_key(NumericVector offsets,
-                       CharacterVector types,
-                       double stress = 0.0) {
+DataFrame cpp_simulate_key(NumericVector offsets,
+                           CharacterVector types,
+                           double stress = 0.0) {
   
   Params params;
   

@@ -34,7 +34,7 @@ f.stress.sim <- function(chart,
       merge(chart.frame, by='offsets', all=T) %>% 
       mutate(is.spike = !is.na(types))
     
-    chart.k.split[[key]] <- simulate_key(
+    chart.k.split[[key]] <- cpp_simulate_key(
       chart.k$offsets,
       chart.k$types
     )
@@ -45,20 +45,3 @@ f.stress.sim <- function(chart,
   chart <- bind_rows(chart.k.split)
   return(chart)
 }
-
-# Some test data
-# chart <- data.frame(keys = c(1,2,3,4),
-#                     types = c('note', 'lnoteh', 'lnotel', 'note'),
-#                     offsets = c(10,20,30,40))
-# 
-# df.mapping <- data.frame(types = c('note', 'lnoteh', 'lnotel'),
-#                          adds = c(50,50,25),
-#                          mults = c(1.1, 1.1, 1.03))
-# 
-# 
-# f.spike <- function(stress, args){
-#   return((stress + args$adds) * args$mults)
-# }
-# f.decay <- function(stress, duration){
-#   return(stress / (2 ** duration))
-# }
