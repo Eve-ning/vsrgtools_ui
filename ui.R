@@ -35,8 +35,6 @@ shinyUI(fluidPage(
         sliderInput("raw_op", "Raw Opacity", 0.01, 1.00, value = 0.75, step = 0.01),
         checkboxInput("raw_show", "Show Raw", value = T),
         
-        checkboxInput("label_show", "Show Labels", value = T),
-        
         actionButton("parse", "Parse Input")
     )
     )
