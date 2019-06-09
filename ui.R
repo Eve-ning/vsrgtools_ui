@@ -25,6 +25,18 @@ shinyUI(fluidPage(
                       "Input .osu contexts here",
                       placeholder = "<.osu file>"),
         
+        sliderInput("decay_a", "Decay Alpha", 1.0, 5.0, value = 1.5, step = 0.1),
+        sliderInput("decay_b", "Decay Beta", 100, 10000, value = 1000, step = 100),
+        
+        sliderInput("smoothing", "Smoothing", 0.01, 1.00, value = 0.5, step = 0.01),
+        sliderInput("smoothing_op", "Smoothing Opacity", 0.01, 1.00, value = 0.75, step = 0.01),
+        checkboxInput("smoothing_show", "Show Smoothing", value = T),
+        
+        sliderInput("raw_op", "Raw Opacity", 0.01, 1.00, value = 0.75, step = 0.01),
+        checkboxInput("raw_show", "Show Raw", value = T),
+        
+        checkboxInput("label_show", "Show Labels", value = T),
+        
         actionButton("parse", "Parse Input")
     )
     )

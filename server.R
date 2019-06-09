@@ -9,6 +9,16 @@
 
 library(shiny)
 require(ggplot2)
+require(directlabels)
+
+{
+    source("src/r/chart_parser.R")
+    source("src/r/stress_sim.R")
+    source("src/r/replay_parser.R")
+    source("src/r/diff_broadcast.R")
+    source("src/r/create_move_mapping.R")
+    source("src/r/alpha_calc.R")
+}
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -20,34 +30,31 @@ shinyServer(function(input, output) {
         
         # Stress Simulation
         chart.sim <- f.stress.sim(chart = chart,
-                                  stress.init = 0)
-        
-        print(chart.sim)
+                                  stress.init = 0,
+                                  decay_alpha = input$decay_a,
+                                  decay_beta = input$decay_b)
         
         # Difference Broadcasting
         chart.bcst <- f.diff.broadcast(chart,
                                        ignore.types = c('lnotel'))
         
-        output$stress_sim <- renderPlot({
-            ggplot(chart.sim) +
-                aes(offsets, stress,
-                    group = keys,
-                    color = keys) +
-                geom_point(alpha = 0.2) + 
-                geom_line() +
-                facet_wrap(. ~ keys, ncol = 1)
-        })
+        sim.plot <- ggplot(chart.sim) +
+                    aes(offsets, stress,
+                        group = factor(keys),
+                        color = factor(keys))
+        
+        if (input$raw_show) {
+            sim.plot <- sim.plot + geom_line(alpha = input$raw_op)
+        }
+        
+        if (input$smoothing_show) {
+            sim.plot <- sim.plot + stat_smooth(geom='line',
+                                               alpha = input$smoothing_op,
+                                               method = "loess",
+                                               span = input$smoothing) 
+        }
+        
+        
+        output$stress_sim <- renderPlot({sim.plot})
     })
-    
-    # output$distPlot <- renderPlot({
-    # 
-    #     # generate bins based on input$bins from ui.R
-    #     x    <- faithful[, 2]
-    #     bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    # 
-    #     # draw the histogram with the specified number of bins
-    #     hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    # 
-    # })
-
 })
