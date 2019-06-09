@@ -19,6 +19,8 @@ using namespace Rcpp;
 
 DataFrame cpp_simulate_key(NumericVector offsets,
                            CharacterVector types,
+                           double decay_alpha = 1.5,
+                           double decay_beta = 1000,
                            double stress = 0.0) {
   
   Params params;
@@ -31,7 +33,7 @@ DataFrame cpp_simulate_key(NumericVector offsets,
   
   // Initialize with -1 as default
   NumericVector stress_base(rows, -1.0);
-  NumericVector stress_spike(rows, -1.0);
+  // NumericVector stress_decay(rows, -1.0);
   
   double offset_buffer = 0.0;
   double offset = 0.0;
@@ -51,12 +53,19 @@ DataFrame cpp_simulate_key(NumericVector offsets,
     // This conditional is reversed since non-spikes are more
     // common
     if (type == "NA") {
-      stress_base[row] = params.decay_func(stress, duration);
+      stress_base[row] = params.decay_func(stress,
+                                           duration,
+                                           decay_alpha,
+                                           decay_beta);
     } else {
-      stress = params.decay_func(stress, duration);
-      stress_base[row] = stress;
+      stress = params.decay_func(stress,
+                                 duration,
+                                 decay_alpha,
+                                 decay_beta);
+      
+      // stress_decay[row] = stress;
       stress = params.spike_func(stress, type);
-      stress_spike[row] = stress;
+      stress_base[row] = stress;
     }
 
     offset_buffer = offset;
@@ -64,8 +73,8 @@ DataFrame cpp_simulate_key(NumericVector offsets,
   
   DataFrame stress_df = DataFrame::create(
     _["offsets"] = clone(offsets),
-    _["stress"] = clone(stress_base),
-    _["stress_spikes"] = clone(stress_spike)
+    _["stress"] = clone(stress_base)
+    // _["stress_decay"] = clone(stress_decay)
   );
   
   return stress_df;
