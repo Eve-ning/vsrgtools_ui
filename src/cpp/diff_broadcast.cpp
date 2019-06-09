@@ -10,8 +10,8 @@ using namespace Rcpp;
   //  otherwise
   
 // [[Rcpp::export]]  
-NumericMatrix broadcast(NumericVector offsets,
-                        LogicalMatrix resets){
+NumericMatrix cpp_broadcast(NumericVector offsets,
+                            LogicalMatrix resets){
   
   unsigned int rows = offsets.length();
 
