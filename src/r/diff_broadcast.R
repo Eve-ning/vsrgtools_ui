@@ -14,12 +14,13 @@ f.diff.broadcast <- function(chart,
   require(Rfast)
   require(dplyr)
   
+  Rcpp::sourceCpp("src/cpp/diff_broadcast.cpp")
+  
   # Drop NA rows
   chart %<>%
-    filter(!is.na(types)) %>% 
   
   # Ignores any types that matches the list
-    mutate(types = ifelse(types %in% ignore.types, NA, types)) %>%
+    filter(!(types %in% ignore.types)) %>%
   
   # Cast keys to longer table.
     dcast(offsets ~ keys, value.var = 'types') %>% 
