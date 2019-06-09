@@ -1,5 +1,7 @@
 f.stress.sim <- function(chart,
-                         stress.init = 0.0){
+                         stress.init = 0.0,
+                         decay_alpha = 1.5,
+                         decay_beta = 1000){
   #' Simulates the Stress through types
   #' 
   #' @description 
@@ -13,7 +15,6 @@ f.stress.sim <- function(chart,
   require(Rcpp)
   
   Rcpp::sourceCpp("src/cpp/stress_sim.cpp")
-  
   # Allocate columns in advance
   chart %<>% 
     arrange(offsets)
@@ -32,7 +33,9 @@ f.stress.sim <- function(chart,
     
     chart.k.sim <- cpp_simulate_key(
       chart.k$offsets,
-      chart.k$types
+      chart.k$types,
+      decay_alpha = decay_alpha,
+      decay_beta = decay_beta
     )
     
     chart.k.sim %<>%
