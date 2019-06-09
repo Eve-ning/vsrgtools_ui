@@ -38,7 +38,7 @@ DataFrame simulate_key(NumericVector offsets,
   double duration = 0.0;
   std::string type = "";
   
-  for (unsigned int row; row < rows; row ++) {
+  for (unsigned int row = 0; row < rows; row ++) {
     // Get all the required parameters
     offset = offsets[row];
     type = types[row];
