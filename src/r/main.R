@@ -28,7 +28,7 @@ microbenchmark(
   
   # Difference Broadcasting
     chart.bcst <- f.diff.broadcast(chart,
-                                  ignore.types = c('lnotel'))
+                                   ignore.types = c('lnotel'))
   
   # Alpha
     keyset.select <- '4'
@@ -36,10 +36,10 @@ microbenchmark(
       return(moves.values * (1/diffs ** 2))
     }
     chart.alpha <- f.alpha.calc(chart.bcst,
-                                f.create.move.mapping(keyset.select),
+                                suppressMessages(f.create.move.mapping(keyset.select)),
                                 f.alpha)
   }
-, times = 1
+, times = 5
 )
 
 'require(ggdark)
