@@ -10,6 +10,8 @@
 library(shiny)
 require(ggplot2)
 require(directlabels)
+require(magrittr)
+require(dplyr)
 
 {
     source("src/r/chart_parser.R")
@@ -34,12 +36,13 @@ shinyServer(function(input, output) {
                                   decay_alpha = input$decay_a,
                                   decay_beta = input$decay_b)
         
-        # Difference Broadcasting
-        chart.bcst <- f.diff.broadcast(chart,
-                                       ignore.types = c('lnotel'))
+        chart.sim %<>%
+            mutate(bins = (offsets %/% input$bin_size) * input$bin_size) %>% 
+            group_by(bins, keys) %>% 
+            summarise(stress.mean = mean(stress))
         
         sim.plot <- ggplot(chart.sim) +
-                    aes(offsets, stress,
+                    aes(bins, stress.mean,
                         group = factor(keys),
                         color = factor(keys))
         
@@ -54,7 +57,27 @@ shinyServer(function(input, output) {
                                                span = input$smoothing) 
         }
         
-        
         output$stress_sim <- renderPlot({sim.plot})
+        
+        # Difference Broadcasting
+        chart.bcst <- f.diff.broadcast(chart,
+                                       ignore.types = c('lnotel'))
+        
+        chart.bcst %<>% 
+            filter(keys.froms == keys.tos) %>% 
+            mutate(jack.inverse = 1/diffs) %>% 
+            mutate(bins = (offsets %/% input$bin_size) * input$bin_size) %>% 
+            group_by(bins, keys.froms) %>% 
+            summarise(jack.inverse.mean = mean(jack.inverse))
+        
+        bcst.plot <- ggplot(chart.bcst) +
+                     aes(bins, jack.inverse.mean,
+                         group = factor(keys.froms),
+                         color = factor(keys.froms)) +
+            geom_line() +
+            facet_wrap(. ~ keys.froms, nrow = 2)
+        
+        output$broadcast <- renderPlot({bcst.plot})
+            
     })
 })
