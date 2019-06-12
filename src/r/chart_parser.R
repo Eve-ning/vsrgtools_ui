@@ -12,7 +12,7 @@ f.chart.parse <- function(chart.path = NA,
   
   require(magrittr)
   
-  if (and(is.na(chart.path), is.na(chart.lines))) {
+  if (suppressWarnings(and(is.na(chart.path), is.na(chart.lines)))) {
     stop("Both Arguments cannot be NA")
   } else if (is.na(chart.path)) {
     chart <- chart.lines
