@@ -1,0 +1,3 @@
+[submodule "osutools"]
+	path = osutools
+	url = https://github.com/Eve-ning/osutools.git
