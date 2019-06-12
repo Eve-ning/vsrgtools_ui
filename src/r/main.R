@@ -1,8 +1,3 @@
-require(ggplot2)
-require(reshape2)
-require(zoo)
-require(dplyr)
-require(magrittr)
 require(microbenchmark)
 {
   library(osutools)
