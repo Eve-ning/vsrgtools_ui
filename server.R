@@ -12,15 +12,7 @@ require(ggplot2)
 require(directlabels)
 require(magrittr)
 require(dplyr)
-
-{
-    source("src/r/chart_parser.R")
-    source("src/r/stress_sim.R")
-    source("src/r/replay_parser.R")
-    source("src/r/diff_broadcast.R")
-    source("src/r/create_move_mapping.R")
-    source("src/r/alpha_calc.R")
-}
+require(osutools)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
