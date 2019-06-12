@@ -1,0 +1,13 @@
+name: vsrg_sim
+title: vsrg_sim
+username:
+account: evening
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 973503
+bundleId: 2141742
+url: https://evening.shinyapps.io/vsrg_sim/
+when: 1560139743.40597
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .gitattributes|LICENSE|README.md|img|src_old
