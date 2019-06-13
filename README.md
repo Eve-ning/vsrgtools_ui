@@ -1,25 +1,9 @@
-# VSRG Simulating
+# osutools User Interface Side
 
-Creates various analyses on VSRG Charts.
+This project uses RShiny to create a website for users to try out osutools without coding in R.
 
-# Structure
+# Dependency Package
 
-The chart is **parsed** from various formats to a `data.table`
+If you're interested in the innerworkings of the functions or is interested in the R Package, visit the link below.
 
-The `data.table` is then used for various **analyses**.
-
-## Parsers
-
-`f.chart.parse` is the main wrapper function for all parsing formats
-
-## Analysis Tools
-
-`f.chart.sim`
-
-Simulates chart via a **Spike** and **Decay** function
-
-`f.diff.broadcast`
-
-Finds differences between vertically-neighbouring objects
-
-##  ![Documentation](src/documentation/documentation.md)
+![osutools](https://github.com/Eve-ning/osutools)
