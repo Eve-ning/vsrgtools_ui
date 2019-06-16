@@ -16,8 +16,9 @@ shinyUI(fluidPage(
     titlePanel("VSRG Simulator Interface"),
 
     mainPanel(
-        plotOutput("stress_sim"),
-        plotOutput("broadcast")
+        plotOutput("plt"),
+        textOutput("dif"),
+        textOutput("dly")
         ),
     
     sidebarPanel(
@@ -25,17 +26,15 @@ shinyUI(fluidPage(
                       "Input .osu contexts here",
                       placeholder = "<.osu file>"),
         
-        sliderInput("decay_a", "Decay Alpha", 1.0, 5.0, value = 1.5, step = 0.1),
-        sliderInput("decay_b", "Decay Beta", 100, 10000, value = 1000, step = 100),
-        
+        sliderInput("rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
         sliderInput("smoothing", "Smoothing", 0.01, 1.00, value = 0.5, step = 0.01),
-        sliderInput("smoothing_op", "Smoothing Opacity", 0.01, 1.00, value = 0.75, step = 0.01),
-        checkboxInput("smoothing_show", "Show Smoothing", value = T),
-        
-        sliderInput("raw_op", "Raw Opacity", 0.01, 1.00, value = 0.75, step = 0.01),
-        checkboxInput("raw_show", "Show Raw", value = T),
-        
-        sliderInput("bin_size", "Bin Size", 100, 25000, value = 5000, step = 100),
+        checkboxInput("summarise", "Summarise", T),
+        selectInput("keyset.select",
+                    label = "Keyset Selection",
+                    choices = c("4", "5R", "5L", "6", "7R", "7L", "8SPR", "8SPL", "8SYM", "9R", "9L"),
+                    selected = "4"),
+        sliderInput("dif.quant", "Calculation Quantile", 0.01, 1.00, value = 0.85, step = 0.01),
+    
         
         actionButton("parse", "Parse Input")
     )
