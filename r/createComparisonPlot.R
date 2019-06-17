@@ -1,7 +1,8 @@
 createComparisonPlot <- function(s.mdls,
                                  lim.jck,
                                  lim.mtn,
-                                 lim.dns){
+                                 lim.dns,
+                                 span){
   
   require(ggplot2)
   require(ggpubr)

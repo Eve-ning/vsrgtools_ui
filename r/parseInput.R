@@ -20,7 +20,7 @@ parseInput <- function(chart.lines,
   chart %<>% mutate(offsets = offsets / rate)
 
   s.mdls <- createStaticModels(chart)
-  plt <- createComparisonPlot(s.mdls, lim.jck, lim.mtn, lim.dns)
+  plt <- createComparisonPlot(s.mdls, lim.jck, lim.mtn, lim.dns, span)
   dif <- calculateDifficulty(s.mdls)
   
   end.time <- Sys.time()
