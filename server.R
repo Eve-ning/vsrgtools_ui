@@ -19,7 +19,6 @@ shinyServer(function(input, output) {
         osu <- calculateDifficulty(osu,
                                    keyset.select = input$keyset.select,
                                    span = input$smoothing,
-                                   is.summarised = input$summarise,
                                    rate = input$rate,
                                    dif.quant = input$dif.quant)
         
