@@ -1,4 +1,4 @@
-createStaticModels <- function(chart){
+createStaticModels <- function(chart, keyset.select){
   chart.bcst <- diffBroadcast(chart)
   
   model.jackInv.gen <- function(){

@@ -1,5 +1,5 @@
 # This will use d.mdl once it's done
-calculateDifficulty <- function(s.mdls){
+calculateDifficulty <- function(s.mdls, dif.quant){
   jck <- quantile(s.mdls$jck$jack.invs, dif.quant)
   mtn <- quantile(s.mdls$mtn$diffs.invs, dif.quant)
   dns <- quantile(s.mdls$dns$counts, dif.quant)

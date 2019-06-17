@@ -4,7 +4,8 @@ parseInput <- function(chart.lines,
                        rate = 1.0,
                        lim.jck = NA,
                        lim.mtn = NA,
-                       lim.dns = NA){
+                       lim.dns = NA,
+                       dif.quant = 0.85){
   
   require(osutools)
   require(magrittr)
@@ -19,9 +20,9 @@ parseInput <- function(chart.lines,
   chart <- chartParse(chart.lines = chart.lines)
   chart %<>% mutate(offsets = offsets / rate)
 
-  s.mdls <- createStaticModels(chart)
+  s.mdls <- createStaticModels(chart, keyset.select)
   plt <- createComparisonPlot(s.mdls, lim.jck, lim.mtn, lim.dns, span)
-  dif <- calculateDifficulty(s.mdls)
+  dif <- calculateDifficulty(s.mdls, dif.quant)
   
   end.time <- Sys.time()
   dly = end.time - start.time
