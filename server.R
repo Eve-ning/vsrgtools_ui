@@ -1,30 +1,21 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
-require(osutools)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-    source("r/calculateDifficulty.R")
+    source("r/parseInput.R")
+    require(osutools)
     observeEvent(input$parse, {
         osu <- strsplit(input$osu, '\n')
         osu <- osu[[1]]
-        osu <- calculateDifficulty(osu,
-                                   keyset.select = input$keyset.select,
-                                   span = input$smoothing,
-                                   rate = input$rate,
-                                   dif.quant = input$dif.quant)
+        osu <- parseInput(osu,
+                          keyset.select = input$keyset.select,
+                          span = input$smoothing,
+                          rate = input$rate,
+                          dif.quant = input$dif.quant)
         
-        output$plt <- renderPlot(osu$plt)
+        output$plt <- renderPlot(osu$plt, height="auto")
         output$dif <- renderText(osu$dif)
-        output$dly <- renderText(osu$dly)
+        output$dly <- renderText(paste0(osu$dly, " seconds elapsed "))
             
     })
 })

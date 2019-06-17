@@ -1,12 +1,3 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 
 # Define UI for application that draws a histogram
@@ -16,6 +7,7 @@ shinyUI(fluidPage(
     titlePanel("VSRG Simulator Interface"),
 
     mainPanel(
+        
         plotOutput("plt"),
         textOutput("dif"),
         textOutput("dly")
@@ -27,8 +19,7 @@ shinyUI(fluidPage(
                       placeholder = "<.osu file>"),
         
         sliderInput("rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
-        sliderInput("smoothing", "Smoothing", 0.01, 1.00, value = 0.5, step = 0.01),
-        checkboxInput("summarise", "Summarise", T),
+        sliderInput("smoothing", "Smoothing", 0.01, 1.00, value = 0.1, step = 0.01),
         selectInput("keyset.select",
                     label = "Keyset Selection",
                     choices = c("4", "5R", "5L", "6", "7R", "7L", "8SPR", "8SPL", "8SYM", "9R", "9L"),
