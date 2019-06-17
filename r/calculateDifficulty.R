@@ -4,11 +4,9 @@ calculateDifficulty <- function(chart.lines,
                                 keyset.select,
                                 span = 0.1,
                                 rate = 1.0,
-                                is.summarised = T,
                                 lim.jck = NA,
                                 lim.mtn = NA,
-                                lim.dns = NA,
-                                dif.quant = 0.85){
+                                lim.dns = NA){
   
   require(osutools)
   require(magrittr)
@@ -24,62 +22,18 @@ calculateDifficulty <- function(chart.lines,
   chart.bcst <- diffBroadcast(chart)
   
   model.jackInv.gen <- function(){
-    model.jackInv.fun <- function(jack.invs) {
-      return(max(jack.invs) + mean(jack.invs) * 0.25)
-    }
-    
-    model.jackInv(chart.bcst,
-                  is.summarised = is.summarised,
-                  summarised.fun = model.jackInv.fun)
+    model.jackInv(chart.bcst)
   }
   model.motion.gen <- function(){
-    model.motion.fun <- function(diffs.invs, keys.froms, keys.tos) {
-      # keys.mid <- max(keys.froms) / 2
-      # df <- data.frame(
-      #   diffs.invs = diffs.invs,
-      #   keys.froms = keys.froms - keys.mid,
-      #   keys.tos = keys.tos - keys.mid
-      # )
-      # 
-      # df %<>%
-      #   mutate(is.diff.hand = ((keys.froms * keys.tos) < 0),
-      #          keys.froms = abs(keys.froms),
-      #          keys.tos = abs(keys.tos),
-      #          adjust = ifelse(keys.tos < keys.froms & (!is.diff.hand), 1.5, 1.0),
-      #          out = adjust * diffs.invs)
-      
-      # return(max(df$out) + mean(df$out) * 0.25)
-      return(1)
-    }
     model.motion(chart.bcst,
                  keyset.select = keyset.select,
                  suppress = T,
                  suppress.threshold = 50,
-                 suppress.scale = 5,
-                 is.summarised = is.summarised,
-                 summarised.num.fun = model.motion.fun)
+                 suppress.scale = 5)
   }
   model.density.gen <- function(){
-    model.density.df <- data.frame(
-      types = c('lnotel', 'lnoteh', 'note'),
-      adjusts = c(0.5, 1.0, 1.0)
-    )
-    model.density.fun <- function(counts, types) {
-      # df <- data.frame(
-      #   counts = counts,
-      #   types = types
-      # )
-      # df %<>% merge(model.density.df) %>% 
-      #   mutate(output = counts * adjusts)
-      # 
-      # return(sum(df$output))
-      return(1)
-    }
-    
     model.density(chart,
-                  window = 1000,
-                  is.summarised = is.summarised,
-                  summarised.fun = model.density.fun)
+                  window = 1000)
   }
 
   model.plot.gen <- function(jck, mtn, dns){
@@ -98,21 +52,20 @@ calculateDifficulty <- function(chart.lines,
       geom_smooth(se = F, method = 'loess', span = span) +
       ylab("Density Difficulty") 
     
+  
+    p.jck <- p.jck +
+      aes(color = keys) +
+      facet_wrap(. ~ keys, nrow = 1)
     
-    if(!is.summarised) {
-      p.jck <- p.jck +
-        aes(color = keys) +
-        facet_wrap(. ~ keys, nrow = 1)
-      
-      p.mtn <- p.mtn +
-        aes(color = (paste(tos)),
-            group = paste(tos, froms)) +
-        facet_wrap(. ~ froms, nrow = 1) 
-      
-      p.dns <- p.dns +
-        aes(color = types,
-            group = types)
-    }
+    p.mtn <- p.mtn +
+      aes(color = (paste(tos)),
+          group = paste(tos, froms)) +
+      facet_wrap(. ~ froms, nrow = 1) 
+    
+    p.dns <- p.dns +
+      aes(color = types,
+          group = types)
+    
     
     if (!is.na(lim.jck)){
       p.jck <- p.jck + coord_cartesian(ylim=c(0, lim.jck))
