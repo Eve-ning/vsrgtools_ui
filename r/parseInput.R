@@ -1,11 +1,14 @@
-parseInput <- function(chart.lines,
-                       keyset.select,
+parseInput <- function(chart.lines = NA,
+                       chart.path = NA,
+                       keyset.select = '4',
                        span = 0.1,
                        rate = 1.0,
-                       lim.jck = NA,
-                       lim.mtn = NA,
-                       lim.dns = NA,
-                       dif.quant = 0.85){
+                       lim.hist = NA,
+                       lim.line = NA,
+                       dif.quant = 0.85,
+                       dif.quant.type = 1,
+                       make.plot = T,
+                       plot.title = ""){
   
   require(osutools)
   require(magrittr)
@@ -17,16 +20,24 @@ parseInput <- function(chart.lines,
   
   start.time <- Sys.time()
   
-  chart <- chartParse(chart.lines = chart.lines)
+  chart <- chartParse(chart.path = chart.path,
+                      chart.lines = chart.lines)
   chart %<>% mutate(offsets = offsets / rate)
 
   s.mdls <- createStaticModels(chart, keyset.select)
-  plt <- createComparisonPlot(s.mdls, lim.jck, lim.mtn, lim.dns, span)
-  dif <- calculateDifficulty(s.mdls, dif.quant)
+  
+  if (make.plot){
+    plt <- createComparisonPlot(s.mdls, lim.hist, lim.line, span, plot.title)
+  } else {
+    plt <- ""
+  }
+  
+  dif <- calculateDifficulty(s.mdls, dif.quant, dif.quant.type)
   
   end.time <- Sys.time()
   dly = end.time - start.time
   return(list("plt" = plt,
+              "s.mdls" = s.mdls,
               "dif" = dif,
               "dly" = dly))
 }
