@@ -8,8 +8,7 @@ shinyUI(fluidPage(
 
     mainPanel(
         
-        plotOutput("plt"),
-        textOutput("dif"),
+        plotOutput("plt", height = "900px"),
         textOutput("dly")
         ),
     
