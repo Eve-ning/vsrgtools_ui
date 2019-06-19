@@ -1,19 +1,18 @@
 createStaticModels <- function(chart, keyset.select){
-  chart.bcst <- diffBroadcast(chart)
+  chart.ext <- chartExtract(chart, keyset.select = keyset.select)
   
   model.jackInv.gen <- function(){
-    model.jackInv(chart.bcst)
+    model.jackInv(chart.ext)
   }
   model.motion.gen <- function(){
-    model.motion(chart.bcst,
-                 keyset.select = keyset.select,
+    model.motion(chart.ext,
                  suppress = T,
                  suppress.threshold = 50,
                  suppress.scale = 5)
   }
   model.density.gen <- function(){
-    model.density(chart,
-                  window = 1000)
+    model.density(chart.ext,
+                  window = 1000, mini.ln.parse = T, mini.ln.threshold = 150)
   }
   
   jck <- model.jackInv.gen()

@@ -20,9 +20,14 @@ createComparisonPlot <- function(s.mdls,
     xlab("Motion Difficulty") +
     ylab("Frequency") 
   
-  p.dns <- ggplot(s.mdls$dns) +
+  require(dplyr)
+  require(magrittr)
+  dns <- s.mdls$dns %>% 
+    filter(types %in% c('m.lnoteh', 'lnoteh', 'note'))
+  
+  p.dns <- ggplot(dns) +
     aes(offsets, counts) +
-    geom_smooth(se = F, method = 'loess', span = span) +
+    stat_smooth(geom = 'area', span = span, method = 'loess', position = "stack") +
     xlab("Offsets") +
     ylab("Density Difficulty") 
   
@@ -31,12 +36,12 @@ createComparisonPlot <- function(s.mdls,
     facet_wrap(. ~ keys, nrow = 1)
   
   p.mtn <- p.mtn +
-    aes(fill = (paste(tos)),
-        group = paste(tos, froms)) +
-    facet_wrap(. ~ froms, nrow = 1)
+    aes(fill = (paste(fngs.tos)),
+        group = paste(fngs.tos, fngs.froms)) +
+    facet_wrap(. ~ fngs.froms, nrow = 1)
   
   p.dns <- p.dns +
-    aes(color = types,
+    aes(fill = types,
         group = types) 
   
   if (!is.na(lim.hist)){
