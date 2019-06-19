@@ -1,4 +1,4 @@
-library(shiny)
+library(shinydashboard)
 library(osutools)
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -15,7 +15,7 @@ shinyServer(function(input, output) {
         
         output$plt <- renderPlot(chart$plt, height="auto")
         output$dly <- renderValueBox(
-            valueBox(round(chart$dly, 2), subtitle = "seconds elapsed ",
+            valueBox(round(chart$dly, 5), subtitle = "seconds elapsed ",
                      color = "maroon")
             )
             
