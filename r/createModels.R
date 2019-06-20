@@ -1,4 +1,8 @@
-createStaticModels <- function(chart, keyset.select){
+createStaticModels <- function(chart, keyset.select,
+                               mtn.across,
+                               mtn.in,
+                               mtn.out,
+                               mtn.jack){
   chart.ext <- chartExtract(chart, keyset.select = keyset.select)
   
   
@@ -9,7 +13,12 @@ createStaticModels <- function(chart, keyset.select){
     model.motion(chart.ext,
                  suppress = T,
                  suppress.threshold = 50,
-                 suppress.scale = 5)
+                 suppress.scale = 5,
+                 directions.mapping =
+                   data.frame(
+                     directions = c('across', 'in', 'out', 'jack'),
+                     weights = c(mtn.across, mtn.in, mtn.out, mtn.jack)
+                   ))
   }
   model.density.gen <- function(){
     model.density(chart.ext,

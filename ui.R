@@ -14,6 +14,12 @@ dashboardPage(
                     choices = c("4", "5R", "5L", "6", "7R", "7L", "8SPR", "8SPL", "8SYM", "9R", "9L"),
                     selected = "4"),
         sliderInput("dif.quant", "Calculation Quantile (WIP)", 0.01, 1.00, value = 0.85, step = 0.01),
+        sliderInput("mtn.across", "Motion Across", 0.1, 10.0, value = 0.7, step = 0.1),
+        sliderInput("mtn.in", "Motion In", 0.1, 10.0, value = 1.0, step = 0.1),
+        sliderInput("mtn.out", "Motion Out", 0.1, 10.0, value = 1.3, step = 0.1),
+        # sliderInput("mtn.jack", "Motion Jack", 0.1, 10.0, value = 2.0, step = 0.1),
+        
+        
         actionButton("parse", "Parse Input")
         
     ),
@@ -29,9 +35,11 @@ dashboardPage(
                 )
             ),
             column(width = 3, valueBoxOutput("dly", width = NULL)),
-            # column(width = 3, valueBoxOutput("jck", width = NULL)),
-            # column(width = 3, valueBoxOutput("mtn", width = NULL)),
-            # column(width = 3, valueBoxOutput("dns", width = NULL)),
+            column(width = 3, valueBoxOutput("jck", width = NULL)),
+            column(width = 3, valueBoxOutput("mtn", width = NULL)),
+            column(width = 3, valueBoxOutput("dns", width = NULL)),
+            column(width = 6, valueBoxOutput("calc1", width = NULL)),
+            column(width = 6, valueBoxOutput("calc2", width = NULL)),
             column(width = 8,
                box(width = NULL, status = 'info',
                    h1("Details"),

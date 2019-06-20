@@ -8,7 +8,11 @@ parseInput <- function(chart.lines = NA,
                        dif.quant = 0.85,
                        dif.quant.type = 1,
                        make.plot = T,
-                       plot.title = ""){
+                       plot.title = "",
+                       mtn.across = 0.7,
+                       mtn.in = 1.0,
+                       mtn.out = 1.3,
+                       mtn.jack = 2.0){
   
   require(osutools)
   require(magrittr)
@@ -26,7 +30,11 @@ parseInput <- function(chart.lines = NA,
                       chart.lines = chart.lines)
   chart %<>% mutate(offsets = offsets / rate)
 
-  s.mdls <- createStaticModels(chart, keyset.select)
+  s.mdls <- createStaticModels(chart, keyset.select,
+                               mtn.across = mtn.across,
+                               mtn.in = mtn.in,
+                               mtn.out = mtn.out,
+                               mtn.jack = mtn.jack)
 
   if (make.plot){
     plt <- createComparisonPlot(s.mdls, lim.hist, lim.line, span, plot.title)
