@@ -1,6 +1,7 @@
 createStaticModels <- function(chart, keyset.select){
   chart.ext <- chartExtract(chart, keyset.select = keyset.select)
   
+  
   model.jackInv.gen <- function(){
     model.jackInv(chart.ext)
   }
@@ -12,7 +13,9 @@ createStaticModels <- function(chart, keyset.select){
   }
   model.density.gen <- function(){
     model.density(chart.ext,
-                  window = 1000, mini.ln.parse = T, mini.ln.threshold = 150)
+                  window = 1000,
+                  mini.ln.parse = T,
+                  mini.ln.threshold = 150)
   }
   
   jck <- model.jackInv.gen()

@@ -29,9 +29,9 @@ dashboardPage(
                 )
             ),
             column(width = 3, valueBoxOutput("dly", width = NULL)),
-            column(width = 3, valueBoxOutput("jck", width = NULL)),
-            column(width = 3, valueBoxOutput("mtn", width = NULL)),
-            column(width = 3, valueBoxOutput("dns", width = NULL)),
+            # column(width = 3, valueBoxOutput("jck", width = NULL)),
+            # column(width = 3, valueBoxOutput("mtn", width = NULL)),
+            # column(width = 3, valueBoxOutput("dns", width = NULL)),
             column(width = 8,
                box(width = NULL, status = 'info',
                    h1("Details"),

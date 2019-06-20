@@ -20,24 +20,23 @@ parseInput <- function(chart.lines = NA,
   
   start.time <- Sys.time()
   
+  # chart.path = "local_tests/osu/4/Betwixt & Between - out of Blue (Shoegazer) [Abyss].osu"
+  # 
   chart <- chartParse(chart.path = chart.path,
                       chart.lines = chart.lines)
   chart %<>% mutate(offsets = offsets / rate)
 
   s.mdls <- createStaticModels(chart, keyset.select)
-  
+
   if (make.plot){
     plt <- createComparisonPlot(s.mdls, lim.hist, lim.line, span, plot.title)
   } else {
     plt <- ""
   }
   
-  dif <- calculateDifficulty(s.mdls, dif.quant, dif.quant.type)
-  
   end.time <- Sys.time()
   dly = end.time - start.time
   return(list("plt" = plt,
               "s.mdls" = s.mdls,
-              "dif" = dif,
               "dly" = dly))
 }

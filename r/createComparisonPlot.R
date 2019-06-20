@@ -7,42 +7,38 @@ createComparisonPlot <- function(s.mdls,
   require(ggplot2)
   require(ggpubr)
   
+  
   p.jck <- ggplot(s.mdls$jck) +
-    aes(jack.invs * 1000) +
-    geom_histogram(bins = 25) +
-    xlab("Jack Difficulty") +
-    ylab("Frequency") +
+    aes(offsets, values) +
+    stat_smooth(geom = 'area', span = 0.1, method = 'loess', fill = 'blueviolet') +
+    xlab("Offsets") +
+    ylab("Jack Difficulty") +
     ggtitle(plot.title)
   
   p.mtn <- ggplot(s.mdls$mtn) +
-    aes(diffs.invs * 1000) +
-    geom_histogram(bins = 25) +
-    xlab("Motion Difficulty") +
-    ylab("Frequency") 
+    aes(offsets, values) +
+    stat_smooth(geom = 'area', span = 0.1, method = 'loess', fill = 'peru') +
+    xlab("Offsets") +
+    ylab("Motion Difficulty") 
   
-  require(dplyr)
-  require(magrittr)
-  dns <- s.mdls$dns %>% 
-    filter(types %in% c('m.lnoteh', 'lnoteh', 'note'))
-  
-  p.dns <- ggplot(dns) +
-    aes(offsets, counts) +
-    stat_smooth(geom = 'area', span = span, method = 'loess', position = "stack") +
+  p.dns <- ggplot(s.mdls$dns) +
+    aes(offsets, values) +
+    stat_smooth(geom = 'area', span = 0.1, method = 'loess', fill = 'steelblue') +
     xlab("Offsets") +
     ylab("Density Difficulty") 
-  
-  p.jck <- p.jck +
-    aes(fill = keys) +
-    facet_wrap(. ~ keys, nrow = 1)
-  
-  p.mtn <- p.mtn +
-    aes(fill = (paste(fngs.tos)),
-        group = paste(fngs.tos, fngs.froms)) +
-    facet_wrap(. ~ fngs.froms, nrow = 1)
-  
-  p.dns <- p.dns +
-    aes(fill = types,
-        group = types) 
+  # 
+  # p.jck <- p.jck +
+  #   aes(fill = keys) +
+  #   facet_wrap(. ~ keys, nrow = 1)
+  # 
+  # p.mtn <- p.mtn +
+  #   aes(fill = (paste(fngs.tos)),
+  #       group = paste(fngs.tos, fngs.froms)) +
+  #   facet_wrap(. ~ fngs.froms, nrow = 1)
+  # 
+  # p.dns <- p.dns +
+  #   aes(fill = types,
+  #       group = types) 
   
   if (!is.na(lim.hist)){
     p.jck <- p.jck +
