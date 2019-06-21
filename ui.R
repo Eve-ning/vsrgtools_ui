@@ -3,44 +3,68 @@ library(shinydashboard)
 dashboardPage(
 
     dashboardHeader(title = "estear"),
-    dashboardSidebar(
+    dashboardSidebar(width = "300px",
         textAreaInput("text",
                       label = "Input file contents here",
                       placeholder = "<.osu file>"),
-        sliderInput("rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
-        sliderInput("smoothing", "Smoothing", 0.01, 1.00, value = 0.1, step = 0.01),
         selectInput("keyset.select",
                     label = "Keyset Selection",
                     choices = c("4", "5R", "5L", "6", "7R", "7L", "8SPR", "8SPL", "8SYM", "9R", "9L"),
                     selected = "4"),
-        sliderInput("dif.quant", "Calculation Quantile (WIP)", 0.01, 1.00, value = 0.85, step = 0.01),
-        sliderInput("mtn.across", "Motion Across", 0.1, 10.0, value = 0.7, step = 0.1),
-        sliderInput("mtn.in", "Motion In", 0.1, 10.0, value = 1.0, step = 0.1),
-        sliderInput("mtn.out", "Motion Out", 0.1, 10.0, value = 1.3, step = 0.1),
-        # sliderInput("mtn.jack", "Motion Jack", 0.1, 10.0, value = 2.0, step = 0.1),
-        
-        
         actionButton("parse", "Parse Input")
+        
         
     ),
     dashboardBody(
         fluidRow(
-            column(width = 12,
+            column(width = 3,
+            tabBox(title = "Parameters",
+                  id = "tabParams", height = 844, width = NULL,
+                  tabPanel("General", width = NULL,
+                           sliderInput("rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
+                           sliderInput("smoothing", "Smoothing", 0.01, 1.00, value = 0.1, step = 0.01)
+                  ),
+                  tabPanel("Advanced", width = NULL,
+                           sliderInput("dif.quant", "Calculation Quantile (WIP)", 0.01, 1.00, value = 0.85, step = 0.01),
+                           sliderInput("decay.ms", "Decay per ms", 0.001, 1.00, value = 0.1, step = 0.001)
+                  ),
+                  tabPanel("Motion Model", width = NULL,
+                           sliderInput("mtn.jack", "Jack Weight", 0.1, 10.0, value = 2.0, step = 0.1),
+                           sliderInput("mtn.across", "Across Weight", 0.1, 10.0, value = 1.1, step = 0.1),
+                           sliderInput("mtn.in", "In Weight", 0.1, 10.0, value = 1.0, step = 0.1),
+                           sliderInput("mtn.out", "Out Weight", 0.1, 10.0, value = 1.4, step = 0.1),
+                           checkboxInput("mtn.ignore.jacks", "Ignore Jacks", T)
+                  ),
+                  tabPanel("Model", width = NULL,
+                           sliderInput("jck.pow", "Jack Model Weight", 0, 10.0, value = 1.0, step = 0.1),
+                           sliderInput("mtn.pow", "Motion Model Weight", 0, 10.0, value = 1.0, step = 0.1),
+                           sliderInput("dns.pow", "Density Model Weight", 0, 10.0, value = 1.0, step = 0.1)     
+                  )
+            )
+            ),
+            column(width = 9,
                 box(
-                    title = "Plot Output",
+                    title = "Stress Output",
+                    status = "info",
+                    width = NULL,
+                    background = "navy",
+                    plotOutput("stress.plt", height = "350px")
+                )
+            ),
+            column(width = 9,
+                box(
+                    title = "Model Output",
                     status = "info",
                     width = NULL,
                     background = "light-blue",
-                    plotOutput("plt", height = "700px")
+                    plotOutput("model.plt", height = "350px")
                 )
             ),
-            column(width = 3, valueBoxOutput("dly", width = NULL)),
-            column(width = 3, valueBoxOutput("jck", width = NULL)),
-            column(width = 3, valueBoxOutput("mtn", width = NULL)),
-            column(width = 3, valueBoxOutput("dns", width = NULL)),
-            column(width = 6, valueBoxOutput("calc1", width = NULL)),
-            column(width = 6, valueBoxOutput("calc2", width = NULL)),
-            column(width = 8,
+            column(width = 4, valueBoxOutput("dly", width = NULL)),
+            column(width = 4, valueBoxOutput("calc1", width = NULL)),
+            column(width = 4, valueBoxOutput("calc2", width = NULL)),
+            
+            column(width = 4,
                box(width = NULL, status = 'info',
                    h1("Details"),
                    h2("Histograms for Jack and Motion Difficulty"),
