@@ -2,16 +2,10 @@ library(shinydashboard)
 library(osutools)
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-    source("r/parseInput.R")
 
     observeEvent(input$parse, {
         text <- strsplit(input$text, '\n')
         text <- text[[1]]
-        # chart <- parseInput(text,
-        #                     keyset.select = input$keyset.select,
-        #                     span = input$smoothing,
-        #                     rate = input$rate,
-        #                     dif.quant = input$dif.quant)
         
         start.time <- Sys.time()
         chart <- calculateDifficulty(
@@ -46,21 +40,33 @@ shinyServer(function(input, output) {
 
         output$dly <- renderValueBox(valueBox(dly, subtitle = "ms delay", color = 'teal'))
         output$calc1 <- renderValueBox(
-            valueBox(paste(
+            valueBox(color = "maroon",
+            subtitle =
+                paste(
+                    " Approximate Difficulty (",
+                    input$dif.quant[[1]], ' ~ ',
+                    input$dif.quant[[2]], ' Quantile)', sep = ''),
+            value =
+                paste(
                 round(quantile(chart$sim$stress, input$dif.quant)[[1]],2),
                 round(quantile(chart$sim$stress, input$dif.quant)[[2]],2),
-                sep = ' - '
-                ), subtitle = " Stress",
-                     color = "maroon")
-        )
+                sep = ' ~ ')
+            )
+        ) # renderValueBox
         output$calc2 <- renderValueBox(
-            valueBox(paste(
+            valueBox(color = "maroon",
+            subtitle =
+                paste(
+                " Approximate Difficulty (",
+                input$dif.quant[[1]], ' ~ ',
+                input$dif.quant[[2]], ' Quantile)', sep = ''),
+            value =
+                paste(
                 round(quantile(chart$model$values, input$dif.quant)[[1]],2),
-                round(quantile(chart$model$values, input$dif.quant)[[2]],2),
-                sep = ' - '
-            ), subtitle = " Difficulty",
-                     color = "maroon")
-        )
+                round(quantile(chart$model$values, input$dif.quant)[[2]],2)
+                ,sep = ' ~ ')
+            )
+        ) # renderValueBox
         
         output$params.log <- renderText(
             paste(
