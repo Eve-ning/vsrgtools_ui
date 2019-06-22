@@ -1,0 +1,13 @@
+name: estear
+title: estear
+username:
+account: evening
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 992985
+bundleId: 2170982
+url: https://evening.shinyapps.io/estear/
+when: 1561205784.50076
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .gitattributes|.gitmodules|.RData|LICENSE|README.md
