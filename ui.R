@@ -1,5 +1,5 @@
 library(shinydashboard)
-
+library(plotly)
 dashboardPage(
 
     dashboardHeader(title = "estear"),
@@ -46,10 +46,10 @@ dashboardPage(
                 tabPanel("Motion Model", width = NULL,
                     p("These values affect the model entirely, it is not recommended to adjust"),
                     p("Details on adjustment will be written soon on the wiki"),
-                    sliderInput("mtn.jack", "Jack Weight", 0.1, 10.0, value = 2.5, step = 0.1),
-                    sliderInput("mtn.across", "Across Weight", 0.1, 10.0, value = 1.1, step = 0.1),
-                    sliderInput("mtn.in", "In Weight", 0.1, 10.0, value = 1.0, step = 0.1),
-                    sliderInput("mtn.out", "Out Weight", 0.1, 10.0, value = 1.4, step = 0.1),
+                    sliderInput("mtn.jack", "Jack Weight", 0.0, 10.0, value = 2.5, step = 0.1),
+                    sliderInput("mtn.across", "Across Weight", 0.0, 10.0, value = 1.1, step = 0.1),
+                    sliderInput("mtn.in", "In Weight", 0.0, 10.0, value = 1.0, step = 0.1),
+                    sliderInput("mtn.out", "Out Weight", 0.0, 10.0, value = 1.4, step = 0.1),
                     checkboxInput("mtn.ignore.jacks", "Ignore Jacks", F)
                 ),
                 tabPanel("Model", width = NULL,
@@ -68,7 +68,7 @@ dashboardPage(
                        status = "info",
                        width = NULL,
                        background = "light-blue",
-                       plotOutput("model.plt", height = "350px")
+                       plotlyOutput("model.plt", height = "350px")
                    )
             ),
             column(width = 9,
@@ -77,7 +77,7 @@ dashboardPage(
                     status = "info",
                     width = NULL,
                     background = "navy",
-                    plotOutput("stress.plt", height = "350px")
+                    plotlyOutput("stress.plt", height = "350px")
                 )
             ),
             column(width = 4, valueBoxOutput("dly", width = NULL)),

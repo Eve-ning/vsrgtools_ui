@@ -1,6 +1,9 @@
 library(shinydashboard)
 library(osutools)
-# Define server logic required to draw a histogram
+library(plotly)
+library(ggplot2)
+
+
 shinyServer(function(input, output) {
 
     observeEvent(input$parse, {
@@ -26,17 +29,19 @@ shinyServer(function(input, output) {
         end.time <- Sys.time()
         dly <- end.time - start.time
         
-        require(ggplot2)
+
         chart.stress.plt <- ggplot(chart$sim) +
             aes(offsets, stress) +
+            geom_line(alpha = 0.3) + 
             geom_smooth(span = input$smoothing, method='loess', se=F) 
         
         chart.model.plt <- ggplot(chart$model) +
             aes(bins, values) +
+            geom_line(alpha = 0.3) + 
             geom_smooth(span = input$smoothing, method='loess', se=F)
         
-        output$stress.plt <- renderPlot(chart.stress.plt, height="auto")
-        output$model.plt <- renderPlot(chart.model.plt, height="auto")
+        output$stress.plt <- renderPlotly(chart.stress.plt)
+        output$model.plt <- renderPlotly(chart.model.plt)
 
         output$dly <- renderValueBox(valueBox(dly, subtitle = "ms delay", color = 'teal'))
         output$calc1 <- renderValueBox(
@@ -87,9 +92,5 @@ shinyServer(function(input, output) {
                 sep = "; "
             )[1]
         )
-        
     })
-
-    
-    
 })
