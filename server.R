@@ -29,7 +29,8 @@ shinyServer(function(input, output) {
         end.time <- Sys.time()
         dly <- end.time - start.time
         
-
+        # Render Plots
+        {
         chart.stress.plt <- ggplot(chart$sim) +
             aes(offsets, stress) +
             geom_line(alpha = 0.3) + 
@@ -40,9 +41,25 @@ shinyServer(function(input, output) {
             geom_line(alpha = 0.3) + 
             geom_smooth(span = input$smoothing, method='loess', se=F)
         
+        chart.jck.plt <- ggplot(chart$jck) +
+            aes(offsets, values) +
+            geom_line(alpha = 0.3) + 
+            geom_smooth(span = input$smoothing, method='loess', se=F) 
+        chart.mtn.plt <- ggplot(chart$mtn) +
+            aes(offsets, values) +
+            geom_line(alpha = 0.3) + 
+            geom_smooth(span = input$smoothing, method='loess', se=F)
+        chart.dns.plt <- ggplot(chart$dns) +
+            aes(offsets, values) +
+            geom_line(alpha = 0.3) + 
+            geom_smooth(span = input$smoothing, method='loess', se=F) 
+        
         output$stress.plt <- renderPlotly(chart.stress.plt)
         output$model.plt <- renderPlotly(chart.model.plt)
-
+        output$jck.plt <- renderPlotly(chart.jck.plt)
+        output$mtn.plt <- renderPlotly(chart.mtn.plt)
+        output$dns.plt <- renderPlotly(chart.dns.plt)
+        }
         output$dly <- renderValueBox(valueBox(dly, subtitle = "ms delay", color = 'teal'))
         output$calc1 <- renderValueBox(
             valueBox(color = "maroon",

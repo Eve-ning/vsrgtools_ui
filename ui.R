@@ -28,9 +28,9 @@ dashboardPage(
     ),
     dashboardBody(
         fluidRow(
-            column(width = 3,
+            column(width = 4,
             tabBox(title = "Parameters",
-                id = "tabParams", height = 844, width = NULL,
+                id = "tabParams", height = 826, width = NULL,
                 tabPanel("General", width = NULL,
                     p("Speed of the chart"),
                     sliderInput("rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
@@ -62,23 +62,50 @@ dashboardPage(
                 )
             )
             ),
-            column(width = 9,
+            column(width = 8,
                    box(
                        title = "Model Output",
                        status = "info",
                        width = NULL,
                        background = "light-blue",
-                       plotlyOutput("model.plt", height = "350px")
+                       plotlyOutput("model.plt", height = "200px")
                    )
             ),
-            column(width = 9,
+            column(width = 4,
                 box(
                     title = "Stress Output",
                     status = "info",
                     width = NULL,
                     background = "navy",
-                    plotlyOutput("stress.plt", height = "350px")
+                    plotlyOutput("stress.plt", height = "200px")
                 )
+            ),
+            column(width = 4,
+                   box(
+                       title = "JCK Output",
+                       status = "info",
+                       width = NULL,
+                       background = "light-blue",
+                       plotlyOutput("jck.plt", height = "200px")
+                   )
+            ),
+            column(width = 4,
+                   box(
+                       title = "MTN Output",
+                       status = "info",
+                       width = NULL,
+                       background = "navy",
+                       plotlyOutput("mtn.plt", height = "200px")
+                   )
+            ),
+            column(width = 4,
+                   box(
+                       title = "DNS Output",
+                       status = "info",
+                       width = NULL,
+                       background = "navy",
+                       plotlyOutput("dns.plt", height = "200px")
+                   )
             ),
             column(width = 4, valueBoxOutput("dly", width = NULL)),
             column(width = 4, valueBoxOutput("calc1", width = NULL)),
