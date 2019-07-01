@@ -1,6 +1,10 @@
 # Rproj
 .Rproj.user/*
 .Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -117,3 +121,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .Rproj.user
+.RData

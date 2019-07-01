@@ -9,11 +9,14 @@ dashboardPage(
       textAreaInput("text",
         label = "Input file contents here",
         placeholder = "<.osu file>"),
-      selectInput("keyset.select",
+      selectInput("chart.keyset.select",
         label = "Keyset Selection",
         choices = c("4", "5R", "5L", "6", "7R", "7L",
                     "8SPR", "8SPL", "8SYM", "9R", "9L"),
         selected = "4"),
+      checkboxInput("sim.disable",
+        label = "Disable Simulation (May Improve Performance)",
+        value = F),
       actionButton("parse", "Parse Input"),
       menuItem(text = "@def_evening on Twitter",
            href = "https://twitter.com/def_evening",
@@ -38,7 +41,7 @@ dashboardPage(
         id = "tabParams", height = 826, width = NULL,
         tabPanel("General", width = NULL,
           p("Speed of the chart"),
-          sliderInput("rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
+          sliderInput("chart.rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
           p("Smoothing of the plots"),
           sliderInput("smoothing", "Smoothing", 0.01, 1.00, value = 0.1, step = 0.01)
         ),
@@ -46,7 +49,7 @@ dashboardPage(
           p("The Calculation is dependent on this quantile"),
         
           sliderInput("dif.quant", "Calculation Quantile", 0.01, 1.00, value = c(0.85, 0.95), step = 0.01),
-          sliderInput("decay.ms", "Decay per ms", 0.001, 1.00, value = 0.1, step = 0.001)
+          sliderInput("sim.decay.ms", "Decay per ms", 0.001, 1.00, value = 0.1, step = 0.001)
         ),
         tabPanel("Motion Model", width = NULL,
           p("These values affect the model entirely, it is not recommended to adjust"),
@@ -54,20 +57,24 @@ dashboardPage(
           sliderInput("mtn.jack", "Jack Weight", 0.0, 10.0, value = 2.5, step = 0.1),
           sliderInput("mtn.across", "Across Weight", 0.0, 10.0, value = 1.1, step = 0.1),
           sliderInput("mtn.in", "In Weight", 0.0, 10.0, value = 1.0, step = 0.1),
-          sliderInput("mtn.out", "Out Weight", 0.0, 10.0, value = 1.4, step = 0.1),
-          checkboxInput("mtn.ignore.jacks", "Ignore Jacks", F)
+          sliderInput("mtn.out", "Out Weight", 0.0, 10.0, value = 1.4, step = 0.1)
+        ),
+        tabPanel("Manipulation", width = NULL,
+          p("These values affect the model entirely, it is not recommended to adjust"),
+          p("Details on adjustment will be written soon on the wiki"),
+          sliderInput("mnp.window", "Window of MNP", 100, 5000, value = 1000, step = 100),
+          sliderInput("mnp.bias.power", "Bias of Suppression", 0.1, 5, value = 2, step = 0.1)
         ),
         tabPanel("Model", width = NULL,
           p("These values affect the model entirely, it is not recommended to adjust"),
           p("Details on adjustment will be written soon on the wiki"),
-          sliderInput("jck.pow", "Jack Model Weight", 0, 10.0, value = 0.0, step = 0.1),
-          sliderInput("mtn.pow", "Motion Model Weight", 0, 10.0, value = 0.5, step = 0.1),
-          sliderInput("dns.pow", "Density Model Weight", 0, 10.0, value = 1.0, step = 0.1),
+          sliderInput("sim.mtn.pow", "Motion Model Weight", 0, 10.0, value = 0.5, step = 0.1),
+          sliderInput("sim.dns.pow", "Density Model Weight", 0, 10.0, value = 1.0, step = 0.1),
           sliderInput("sim.bin.size", "Simulation Bin Size", 500, 20000, value = 5000, step = 500)
         )
       )
       ),
-      column(width = 4,
+      column(width = 8,
           box(
             title = "Model Output",
             status = "info",
@@ -84,15 +91,6 @@ dashboardPage(
           background = "navy",
           plotlyOutput("stress.plt", height = "200px")
         )
-      ),
-      column(width = 4,
-          box(
-            title = "JCK Output",
-            status = "info",
-            width = NULL,
-            background = "light-blue",
-            plotlyOutput("jck.plt", height = "200px")
-          )
       ),
       column(width = 4,
           box(
@@ -148,3 +146,4 @@ dashboardPage(
     ) # FluidRow
   ) # DashboardBody
 )
+
