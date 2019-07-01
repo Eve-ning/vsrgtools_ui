@@ -21,7 +21,7 @@ shinyServer(function(input, output) {
       mtn.jack.weight = input$mtn.jack,
       mnp.window = input$mnp.window,
       mnp.bias.power = input$mnp.bias.power,
-      sim.decay.ms = input$sim.decay.ms,
+      sim.decay.perc.s = input$sim.decay.perc.s / 100.0,
       sim.mtn.pow = input$sim.mtn.pow,
       sim.dns.pow = input$sim.dns.pow,
       sim.bin.size = input$sim.bin.size,
@@ -111,3 +111,4 @@ shinyServer(function(input, output) {
     )
   })
 })
+

@@ -43,19 +43,19 @@ dashboardPage(
           p("Speed of the chart"),
           sliderInput("chart.rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
           p("Smoothing of the plots"),
-          sliderInput("smoothing", "Smoothing", 0.01, 1.00, value = 0.1, step = 0.01)
+          sliderInput("smoothing", "Smoothing", 0.1, 1.00, value = 0.1, step = 0.01)
         ),
         tabPanel("Advanced", width = NULL,
           p("The Calculation is dependent on this quantile"),
         
           sliderInput("dif.quant", "Calculation Quantile", 0.01, 1.00, value = c(0.85, 0.95), step = 0.01),
-          sliderInput("sim.decay.ms", "Decay per ms", 0.001, 1.00, value = 0.1, step = 0.001)
+          sliderInput("sim.decay.perc.s", "Decay % per s", 1.0, 100, value = 25.0, step = 0.1)
         ),
         tabPanel("Motion Model", width = NULL,
           p("These values affect the model entirely, it is not recommended to adjust"),
           p("Details on adjustment will be written soon on the wiki"),
           sliderInput("mtn.jack", "Jack Weight", 0.0, 10.0, value = 2.5, step = 0.1),
-          sliderInput("mtn.across", "Across Weight", 0.0, 10.0, value = 1.1, step = 0.1),
+          sliderInput("mtn.across", "Across Weight", 0.0, 10.0, value = 0.9, step = 0.1),
           sliderInput("mtn.in", "In Weight", 0.0, 10.0, value = 1.0, step = 0.1),
           sliderInput("mtn.out", "Out Weight", 0.0, 10.0, value = 1.4, step = 0.1)
         ),
@@ -70,7 +70,7 @@ dashboardPage(
           p("Details on adjustment will be written soon on the wiki"),
           sliderInput("sim.mtn.pow", "Motion Model Weight", 0, 10.0, value = 0.5, step = 0.1),
           sliderInput("sim.dns.pow", "Density Model Weight", 0, 10.0, value = 1.0, step = 0.1),
-          sliderInput("sim.bin.size", "Simulation Bin Size", 500, 20000, value = 5000, step = 500)
+          sliderInput("sim.bin.size", "Simulation Bin Size", 500, 20000, value = 2500, step = 500)
         )
       )
       ),
