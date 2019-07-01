@@ -20,7 +20,7 @@ shinyServer(function(input, output) {
       mtn.out.weight = input$mtn.out,
       mtn.jack.weight = input$mtn.jack,
       mnp.window = input$mnp.window,
-      mnp.bias.power = input$mnp.bias.power,
+      mnp.bias.suppress = input$mnp.suppress.power,
       sim.decay.perc.s = input$sim.decay.perc.s / 100.0,
       sim.mtn.pow = input$sim.mtn.pow,
       sim.dns.pow = input$sim.dns.pow,
@@ -64,10 +64,10 @@ shinyServer(function(input, output) {
     output$dly <- renderValueBox(valueBox(dly, subtitle = "ms delay",
                                           color = 'teal'))
     output$calc1 <- renderValueBox(
-      valueBox(color = "maroon",
+      valueBox(color = "olive",
       subtitle =
         paste(
-          " Approximate Difficulty (",
+          " Dynamic Difficulty (",
           input$dif.quant[[1]], ' ~ ',
           input$dif.quant[[2]], ' Quantile)', sep = ''),
       value =
@@ -81,7 +81,7 @@ shinyServer(function(input, output) {
       valueBox(color = "maroon",
       subtitle =
         paste(
-        " Approximate Difficulty (",
+        " Static Difficulty (",
         input$dif.quant[[1]], ' ~ ',
         input$dif.quant[[2]], ' Quantile)', sep = ''),
       value =

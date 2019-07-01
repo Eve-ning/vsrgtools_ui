@@ -1,6 +1,5 @@
 library(shinydashboard)
 library(plotly)
-x <- 1
 dashboardPage(
 
   dashboardHeader(title = "estear"),
@@ -63,7 +62,7 @@ dashboardPage(
           p("These values affect the model entirely, it is not recommended to adjust"),
           p("Details on adjustment will be written soon on the wiki"),
           sliderInput("mnp.window", "Window of MNP", 100, 5000, value = 1000, step = 100),
-          sliderInput("mnp.bias.power", "Bias of Suppression", 0.1, 5, value = 2, step = 0.1)
+          sliderInput("mnp.suppress.power", "Power of Suppression", 0.1, 2, value = 0.8, step = 0.1)
         ),
         tabPanel("Model", width = NULL,
           p("These values affect the model entirely, it is not recommended to adjust"),
