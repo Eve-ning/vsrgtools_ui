@@ -5,9 +5,9 @@ account: evening
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 992985
-bundleId: 2170982
+bundleId: 2196999
 url: https://evening.shinyapps.io/estear/
-when: 1561205784.50076
+when: 1562161416.76556
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .gitattributes|.gitmodules|.RData|LICENSE|README.md
+ignoredFiles: .gitattributes|.gitmodules|.RData|LICENSE|README.md|osutools

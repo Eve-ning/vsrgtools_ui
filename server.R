@@ -20,7 +20,7 @@ shinyServer(function(input, output) {
       mtn.out.weight = input$mtn.out,
       mtn.jack.weight = input$mtn.jack,
       mnp.window = input$mnp.window,
-      mnp.bias.suppress = input$mnp.suppress.power,
+      mnp.bias.scale = input$mnp.bias.scale,
       sim.decay.perc.s = input$sim.decay.perc.s / 100.0,
       sim.mtn.pow = input$sim.mtn.pow,
       sim.dns.pow = input$sim.dns.pow,
