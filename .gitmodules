@@ -1,0 +1,3 @@
+[submodule "vsrgtools"]
+	path = vsrgtools
+	url = https://github.com/Eve-ning/vsrgtools
