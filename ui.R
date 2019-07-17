@@ -62,7 +62,7 @@ dashboardPage(
       ),
       column(width = 8,
           box(
-            title = "MTN Output",
+            title = "Motion Difficulty",
             status = "info",
             width = NULL,
             background = "navy",
@@ -71,7 +71,7 @@ dashboardPage(
       ),
       column(width = 8,
           box(
-            title = "DNS Output",
+            title = "Density Difficulty",
             status = "info",
             width = NULL,
             background = "navy",
@@ -80,7 +80,7 @@ dashboardPage(
       ),
       column(width = 8,
           box(
-            title = "MNP Output",
+            title = "Manipulation Correction",
             status = "info",
             width = NULL,
             background = "navy",
@@ -89,7 +89,7 @@ dashboardPage(
       ),
       column(width = 8,
              box(
-               title = "LNG Output",
+               title = "Long Note Correction",
                status = "info",
                width = NULL,
                background = "navy",
@@ -104,8 +104,13 @@ dashboardPage(
       ),
       column(width = 6,
         box(width = NULL, status = 'info',
-          h2("More Info"),
-          p("All information you'll need will be on the side-bar on the left.")
+          h2("TL;DR"),
+          h3("Motion"), p("is how hard it is to play 2 different notes"),
+          h3("Density"), p("is calculated as Notes per Second"),
+          h3("Manipulation Correction"), p("is a negative scaling, where high
+            values negatively impact difficulty rating"),
+          h3("Long Note Correction"), p("is a positive scaling where high values
+            positively impact difficulty rating")
           
         ) # Detail Box
       ), # Column
