@@ -37,7 +37,7 @@ dashboardPage(
     fluidRow(
       column(width = 4,
       tabBox(title = "Parameters",
-        id = "tabParams", height = 826, width = NULL,
+        id = "tabParams", height = 908, width = NULL,
         tabPanel("General", width = NULL,
           p("Speed of the chart"),
           sliderInput("chart.rate", "Rate", 0.1, 10.00, value = 1.0, step = 0.1),
@@ -63,60 +63,44 @@ dashboardPage(
           p("Details on adjustment will be written soon on the wiki"),
           sliderInput("mnp.window", "Window of MNP", 100, 5000, value = 1000, step = 100),
           sliderInput("mnp.bias.scale", "Bias Scaling", 0.1, 5, value = 0.25, step = 0.05)
-        ),
-        tabPanel("Model", width = NULL,
-          p("These values affect the model entirely, it is not recommended to adjust"),
-          p("Details on adjustment will be written soon on the wiki"),
-          sliderInput("sim.mtn.pow", "Motion Model Weight", 0, 10.0, value = 0.5, step = 0.1),
-          sliderInput("sim.dns.pow", "Density Model Weight", 0, 10.0, value = 1.0, step = 0.1),
-          sliderInput("sim.bin.size", "Simulation Bin Size", 500, 20000, value = 2500, step = 500)
         )
-      )
+        ) # Column
       ),
       column(width = 8,
-          box(
-            title = "Model Output",
-            status = "info",
-            width = NULL,
-            background = "light-blue",
-            plotlyOutput("model.plt", height = "200px")
-          )
-      ),
-      column(width = 4,
-        box(
-          title = "Stress Output",
-          status = "info",
-          width = NULL,
-          background = "navy",
-          plotlyOutput("stress.plt", height = "200px")
-        )
-      ),
-      column(width = 4,
           box(
             title = "MTN Output",
             status = "info",
             width = NULL,
             background = "navy",
-            plotlyOutput("mtn.plt", height = "200px")
+            plotlyOutput("mtn.plt", height = "150px")
           )
       ),
-      column(width = 4,
+      column(width = 8,
           box(
             title = "DNS Output",
             status = "info",
             width = NULL,
             background = "navy",
-            plotlyOutput("dns.plt", height = "200px")
+            plotlyOutput("dns.plt", height = "150px")
           )
       ),
-      column(width = 4,
+      column(width = 8,
           box(
             title = "MNP Output",
             status = "info",
             width = NULL,
             background = "navy",
-            plotlyOutput("mnp.plt", height = "200px")
+            plotlyOutput("mnp.plt", height = "150px")
           )
+      ),
+      column(width = 8,
+             box(
+               title = "LNG Output",
+               status = "info",
+               width = NULL,
+               background = "navy",
+               plotlyOutput("lng.plt", height = "150px")
+             )
       ),
       column(width = 4, valueBoxOutput("dly", width = NULL)),
       column(width = 4, valueBoxOutput("calc1", width = NULL)),

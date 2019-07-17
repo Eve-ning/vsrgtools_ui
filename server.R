@@ -2,6 +2,7 @@ library(shinydashboard)
 library(osutools)
 library(plotly)
 library(ggplot2)
+library(dplyr)
 
 
 shinyServer(function(input, output) {
@@ -11,86 +12,64 @@ shinyServer(function(input, output) {
     text <- text[[1]]
     
     start.time <- Sys.time()
-    chart <- calculateDifficulty(
-      chart.lines = text,
-      chart.keyset.select = input$chart.keyset.select,
-      chart.rate = input$chart.rate,
-      mtn.across.weight = input$mtn.across,
-      mtn.in.weight = input$mtn.in,
-      mtn.out.weight = input$mtn.out,
-      mtn.jack.weight = input$mtn.jack,
-      mnp.window = input$mnp.window,
-      mnp.bias.scale = input$mnp.bias.scale,
-      sim.decay.perc.s = input$sim.decay.perc.s / 100.0,
-      sim.mtn.pow = input$sim.mtn.pow,
-      sim.dns.pow = input$sim.dns.pow,
-      sim.bin.size = input$sim.bin.size,
-      sim.disable = input$sim.disable
+    chart <- chartParse(chart.lines = text)
+    chart <- mutate(chart, offsets = offsets / input$chart.rate)
+    chart.ext <- chartExtract(chart, chart.keyset.select = input$chart.keyset.select)
+    
+    mtn <- model.motion(
+      chart.ext, directions.mapping = 
+      data.frame(
+        directions = c('across', 'in', 'out', 'jack'),
+        weights = c(input$mtn.across, input$mtn.in, input$mtn.out, input$mtn.jack),
+        stringsAsFactors = F
+      ))
+    
+    dns <- model.density(
+      chart
     )
+    
+    mnp <- model.manipulation(
+      chart, input$mnp.window, input$mnp.bias.scale
+    )
+    
+    lng <- model.longNote(
+      chart, input$chart.keyset.select, directions.mapping = 
+      data.frame(
+        directions = c('across', 'in', 'out', 'jack'),
+        weights = c(input$mtn.across, input$mtn.in, input$mtn.out, input$mtn.jack),
+        stringsAsFactors = F
+      )
+    )
+    
     end.time <- Sys.time()
     dly <- end.time - start.time
     
     # Render Plots
     {
-    chart.stress.plt <- ggplot(chart$sim) +
-      aes(offsets, stress) +
+    chart.mtn.plt <- ggplot(mtn) +
+      aes(offsets, values) +
+      geom_line(alpha = 0.3) + 
+      geom_smooth(span = input$smoothing, method='loess', se=F)
+    chart.dns.plt <- ggplot(dns) +
+      aes(offsets, values) +
+      geom_line(alpha = 0.3) + 
+      geom_smooth(span = input$smoothing, method='loess', se=F)
+    chart.mnp.plt <- ggplot(mnp) +
+      aes(offsets, values) +
       geom_line(alpha = 0.3) + 
       geom_smooth(span = input$smoothing, method='loess', se=F) 
-    
-    chart.model.plt <- ggplot(chart$model) +
-      aes(bins, values) +
-      geom_line(alpha = 0.3) + 
-      geom_smooth(span = input$smoothing, method='loess', se=F)
-    
-    chart.mtn.plt <- ggplot(chart$mtn) +
-      aes(offsets, values) +
-      geom_line(alpha = 0.3) + 
-      geom_smooth(span = input$smoothing, method='loess', se=F)
-    chart.dns.plt <- ggplot(chart$dns) +
-      aes(offsets, values) +
-      geom_line(alpha = 0.3) + 
-      geom_smooth(span = input$smoothing, method='loess', se=F)
-    chart.mnp.plt <- ggplot(chart$mnp) +
+    chart.lng.plt <- ggplot(lng) +
       aes(offsets, values) +
       geom_line(alpha = 0.3) + 
       geom_smooth(span = input$smoothing, method='loess', se=F) 
     
-    output$stress.plt <- renderPlotly(chart.stress.plt)
-    output$model.plt <- renderPlotly(chart.model.plt)
     output$mtn.plt <- renderPlotly(chart.mtn.plt)
     output$dns.plt <- renderPlotly(chart.dns.plt)
     output$mnp.plt <- renderPlotly(chart.mnp.plt)
+    output$lng.plt <- renderPlotly(chart.lng.plt)
     }
     output$dly <- renderValueBox(valueBox(dly, subtitle = "ms delay",
                                           color = 'teal'))
-    output$calc1 <- renderValueBox(
-      valueBox(color = "olive",
-      subtitle =
-        paste(
-          " Dynamic Difficulty (",
-          input$dif.quant[[1]], ' ~ ',
-          input$dif.quant[[2]], ' Quantile)', sep = ''),
-      value =
-        paste(
-        round(quantile(chart$sim$stress, input$dif.quant)[[1]],2),
-        round(quantile(chart$sim$stress, input$dif.quant)[[2]],2),
-        sep = ' ~ ')
-      )
-    ) # renderValueBox
-    output$calc2 <- renderValueBox(
-      valueBox(color = "maroon",
-      subtitle =
-        paste(
-        " Static Difficulty (",
-        input$dif.quant[[1]], ' ~ ',
-        input$dif.quant[[2]], ' Quantile)', sep = ''),
-      value =
-        paste(
-        round(quantile(chart$model$values, input$dif.quant)[[1]],2),
-        round(quantile(chart$model$values, input$dif.quant)[[2]],2)
-        ,sep = ' ~ ')
-      )
-    ) # renderValueBox
     
     output$params.log <- renderText(
       paste(
@@ -98,14 +77,11 @@ shinyServer(function(input, output) {
         "mtn.across", input$mtn.across, "\n",
         "mtn.in", input$mtn.in, "\n",
         "mtn.out", input$mtn.out, "\n",
-        "sim.mtn.pow", input$mtn.pow, "\n",
-        "sim.dns.pow", input$dns.pow, "\n",
+        "mnp.window", input$mnp.window, "\n",
+        "mnp.bias.scale", input$mnp.bias.scale, "\n",
         "chart.keyset.select", input$chart.keyset.select, "\n",
         "chart.rate", input$rate, "\n",
         "smoothing", input$smoothing, "\n",
-        "dif.quant", input$dif.quant, "\n",
-        "sim.decay.ms", input$decay.ms, "\n",
-        "sim.bin.size", input$sim.bin.size,
         sep = "; "
       )[1]
     )
