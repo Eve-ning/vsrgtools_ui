@@ -12,13 +12,13 @@ shinyServer(function(input, output) {
     text <- text[[1]]
     
     start.time <- Sys.time()
+    
     chart <- chartParse(chart.lines = text)
     chart <- mutate(chart, offsets = offsets / input$chart.rate)
     chart.ext <- chartExtract(chart, chart.keyset.select = input$chart.keyset.select)
     
     mtn <- model.motion(
-      chart.ext, directions.mapping = 
-      data.frame(
+      chart.ext, directions.mapping = data.frame(
         directions = c('across', 'in', 'out', 'jack'),
         weights = c(input$mtn.across, input$mtn.in, input$mtn.out, input$mtn.jack),
         stringsAsFactors = F
@@ -33,33 +33,36 @@ shinyServer(function(input, output) {
     )
     
     lng <- model.longNote(
-      chart, input$chart.keyset.select, directions.mapping = 
-      data.frame(
+      chart, input$chart.keyset.select,
+      directions.mapping = data.frame(
         directions = c('across', 'in', 'out', 'jack'),
         weights = c(input$mtn.across, input$mtn.in, input$mtn.out, input$mtn.jack),
         stringsAsFactors = F
       )
     )
+    print(mtn)
+    model <- model.export(m.mtn = mtn, m.dns = dns, m.mnp = mnp, m.lng = lng)
+  
     
     end.time <- Sys.time()
     dly <- end.time - start.time
     
     # Render Plots
     {
-    chart.mtn.plt <- ggplot(mtn) +
-      aes(offsets, values) +
+    chart.mtn.plt <- ggplot(model) +
+      aes(offsets, mtn.vals) +
       geom_line(alpha = 0.3) + 
       geom_smooth(span = input$smoothing, method='loess', se=F)
-    chart.dns.plt <- ggplot(dns) +
-      aes(offsets, values) +
+    chart.dns.plt <- ggplot(model) +
+      aes(offsets, dns.vals) +
       geom_line(alpha = 0.3) + 
       geom_smooth(span = input$smoothing, method='loess', se=F)
-    chart.mnp.plt <- ggplot(mnp) +
-      aes(offsets, values) +
+    chart.mnp.plt <- ggplot(model) +
+      aes(offsets, mnp.vals) +
       geom_line(alpha = 0.3) + 
       geom_smooth(span = input$smoothing, method='loess', se=F) 
-    chart.lng.plt <- ggplot(lng) +
-      aes(offsets, values) +
+    chart.lng.plt <- ggplot(model) +
+      aes(offsets, lng.vals) +
       geom_line(alpha = 0.3) + 
       geom_smooth(span = input$smoothing, method='loess', se=F) 
     

@@ -44,12 +44,6 @@ dashboardPage(
           p("Smoothing of the plots"),
           sliderInput("smoothing", "Smoothing", 0.1, 1.00, value = 0.1, step = 0.01)
         ),
-        tabPanel("Advanced", width = NULL,
-          p("The Calculation is dependent on this quantile"),
-        
-          sliderInput("dif.quant", "Calculation Quantile", 0.01, 1.00, value = c(0.85, 0.95), step = 0.01),
-          sliderInput("sim.decay.perc.s", "Decay % per s", 1.0, 100, value = 25.0, step = 0.1)
-        ),
         tabPanel("Motion Model", width = NULL,
           p("These values affect the model entirely, it is not recommended to adjust"),
           p("Details on adjustment will be written soon on the wiki"),
@@ -103,8 +97,6 @@ dashboardPage(
              )
       ),
       column(width = 4, valueBoxOutput("dly", width = NULL)),
-      column(width = 4, valueBoxOutput("calc1", width = NULL)),
-      column(width = 4, valueBoxOutput("calc2", width = NULL)),
       
       column(width = 12,
         box(h3("Most details here will be moved to GitHub soon."),
