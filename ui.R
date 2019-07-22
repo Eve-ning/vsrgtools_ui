@@ -13,9 +13,6 @@ dashboardPage(
         choices = c("4", "5R", "5L", "6", "7R", "7L",
                     "8SPR", "8SPL", "8SYM", "9R", "9L"),
         selected = "4"),
-      checkboxInput("sim.disable",
-        label = "Disable Simulation (May Improve Performance)",
-        value = F),
       actionButton("parse", "Parse Input"),
       menuItem(text = "@def_evening on Twitter",
            href = "https://twitter.com/def_evening",
@@ -30,8 +27,6 @@ dashboardPage(
            href = "https://github.com/Eve-ning/osutools/issues/new",
            icon = icon('github'))
     )
-    
-    
   ),
   dashboardBody(
     fluidRow(
